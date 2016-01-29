@@ -1,0 +1,18 @@
+doctype html
+html(ng-app='Howfast')
+  head
+    title= title
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-resource.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-route.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-messages.js')
+    script(src='http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.min.js')
+    script(src='/javascripts/timezy.js')
+    script(src='/javascripts/filter.js')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/custom.css')
+    link(rel='stylesheet', href='/stylesheets/default.css')
+    link(rel='stylesheet', href='/stylesheets/fonts.css')
+  body
+    block content

@@ -1,0 +1,70 @@
+<h1>Pick an event and enter a time to see how many countries YOU are faster than</h1>
+
+<form name="selection">
+	<select ng-model="distance" ng-options="obj.id for obj in choices" ng-change="selectEvent()">
+		<option value="">Please choose an event</option>
+	</select>
+</form>
+
+<div class="row" ng-show="isSelected">
+  <form name="timeForm" required>
+	  <div class="col-sm-4" ng-show="hasHours">
+  	  <input type="number" ng-pattern="/^[0-9]*$/" name="hours" ng-model="hours" placeholder="hours" required />
+      <div ng-messages="timeForm.hours.$error">
+        <div ng-message="required">this is required</div>
+        <div ng-message="number">please enter a valid number</div>
+        <div ng-message="pattern">please enter a valid number</div>
+      </div>
+    </div>
+  
+  	<div class="col-sm-4" ng-show="hasMinutes">
+  		<input type="number" ng-pattern="/^[0-9]*$/" max="59" name="minutes" ng-model="minutes" placeholder="minutes" required />
+      <div ng-messages="timeForm.minutes.$error">
+        <div ng-message="required">this is required</div>
+        <div ng-message="number">please enter a valid number</div>
+        <div ng-message="pattern">bad pattern</div>
+        <div ng-message="max">must be 59 or lower</div>
+      </div>
+  	</div>
+  
+    <div class="col-sm-4" ng-show="hasSeconds">
+      <input type="number" ng-pattern="/^[0-9]*$/" max="59" name="seconds" ng-model="seconds" placeholder="seconds" required />
+      <div ng-messages="timeForm.seconds.$error">
+        <div ng-message="required">this is required</div>
+        <div ng-message="number">please enter a valid number</div>
+        <div ng-message="pattern">please enter a valid number</div>
+        <div ng-message="max">must be 59 or lower</div>
+      </div>
+    </div>
+  
+  	<div class="col-sm-4" ng-show="hasTenths">
+  		<input type="number" ng-pattern="/^[0-9]*$/" max="99" name="tenths" ng-model="tenths" placeholder="tenths" required />
+      <div ng-messages="timeForm.tenths.$error">
+        <div ng-message="required">this is required</div>
+        <div ng-message="number">please enter a valid number</div>
+        <div ng-message="pattern">please enter a valid number</div>
+        <div ng-message="max">must be 99 or lower</div>
+      </div>
+  	</div>
+  </form>
+  
+    <div class="row wayleft">
+      <div ng-show="timeForm.$error">
+        <button type="button" class="btn btn-success col-sm-6" ng-click="check()">Check</button>
+      </div>
+      <button type="button" class="btn btn-danger col-sm-6" ng-click="clear()">Clear</button>
+    </div>
+</div>
+
+<div class="gap">
+</div>
+
+<div ng-show="isChecked">
+
+  <h2>CONGRATS! You are faster than the runners of {{slowArray.length}} countries, and specifically all...</h2>
+    <ul>
+	     <li ng-repeat='thing in slowArray'>
+			   {{thing.nationality | unders}} ({{thing.time}}) runners!
+	     </li>
+    </ul>
+</div>
