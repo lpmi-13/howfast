@@ -39,11 +39,11 @@ app.controller('HomeCtrl', ['$scope', '$http',
         $scope.hasHours = false;
         $scope.hasMinutes = false;
         $scope.hasSeconds = false;
-        $scope.hasTenths = false;
+        $scope.hasHundredths = false;
         $scope.hours = null;
         $scope.minutes = null;
         $scope.seconds = null;
-        $scope.tenths = null;
+        $scope.hundredths = null;
         $scope.isChecked = false;
     }
 
@@ -68,13 +68,13 @@ app.controller('HomeCtrl', ['$scope', '$http',
             case 'wo_200':
             case 'wo_400':
                 $scope.hasSeconds = true;
-                $scope.hasTenths = true;
+                $scope.hasHundredths = true;
                 break;
             case 'mo_800':
             case 'wo_800':
                 $scope.hasMinutes = true;
                 $scope.hasSeconds = true;
-                $scope.hasTenths = true;
+                $scope.hasHundredths = true;
                 break;
             case 'mo_1500':
             case 'mo_5000':
@@ -101,10 +101,10 @@ app.controller('HomeCtrl', ['$scope', '$http',
         var hours = $scope.hours || 0;
         var minutes = $scope.minutes || 0;
         var seconds = $scope.seconds || 0;
-        var tenths = $scope.tenths || 0;
+        var hundredths = $scope.hundredths || 0;
 
         $scope.myTime = (hours * 3600) + (minutes * 60) +
-          + seconds + (tenths/100);
+          + seconds + (hundredths/100);
         
         $scope.slowArray = [];
 
@@ -121,7 +121,7 @@ app.controller('HomeCtrl', ['$scope', '$http',
         $scope.hours = 0;
         $scope.minutes = 0;
         $scope.seconds = 0;
-        $scope.tenths = 0;
+        $scope.hundredths = 0;
         $scope.isChecked = false;
     }
 }]);
