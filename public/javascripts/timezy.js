@@ -31,7 +31,7 @@ app.controller('HomeCtrl', ['$scope', '$http',
         { id: 'womens 1500', db: 'wo_1500'},
         { id: 'womens 5000', db: 'wo_5000'},
         { id: 'womens 10000', db: 'wo_10000'},
-        { id: 'womens half', db: 'wo_half'},
+        { id: 'womens half marathon', db: 'wo_half'},
         { id: 'womens marathon', db: 'wo_marathon'}
     ];
 
