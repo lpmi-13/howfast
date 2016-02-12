@@ -106,3 +106,9 @@ textarea {
 .behind {
   background-color: #DCDCDC;
 }
+
+path {
+    stroke: white;
+    stroke-width: 0.5px;
+    fill: teal;
+}

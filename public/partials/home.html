@@ -59,12 +59,19 @@
 <div class="gap">
 </div>
 
+<div class="map">
+  </div>
+
 <div ng-show="isChecked">
+
+<!-- create bar dividers here between sections to separate sections that can expand on click
+so that different sections (event/time select, faster than list, and map) are all on the same page at one time, but in condensed form -->
+
 
   <h2>CONGRATS! You are faster than the runners of {{slowArray.length}} countries, and specifically all...</h2>
     <ul>
-	     <li ng-repeat='thing in slowArray'>
-			   {{thing.nationality | unders}} ({{thing.time}}) runners!
+	     <li ng-repeat='result in slowArray'>
+			   {{result.nationality | unders}} ({{result.time}}) runners from {{result.country}}!
 	     </li>
     </ul>
 </div>

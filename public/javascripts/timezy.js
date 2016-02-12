@@ -96,6 +96,8 @@ app.controller('HomeCtrl', ['$scope', '$http',
         }
     }
 
+    $scope.newConvertedArray = [];
+
     $scope.check = function () {
 
         var hours = $scope.hours || 0;
@@ -107,14 +109,41 @@ app.controller('HomeCtrl', ['$scope', '$http',
           + seconds + (hundredths/100);
         
         $scope.slowArray = [];
+        $scope.mapArray = [];
 
         $scope.events.map(function(s) {
             if (s.seconds > $scope.myTime) {
-                $scope.slowArray.push({nationality : s.nationality, time : s.time, seconds : s.seconds});
+                $scope.slowArray.push({country : s.country, nationality : s.nationality, time : s.time, seconds : s.seconds});
             }
         });
+        console.log($scope.slowArray);
 
+        // if ($scope.slowArray)
         $scope.isChecked = true;
+
+        $scope.newConvertedArray = $scope.slowArray.map(function(t) {
+            return t.country.replace("Great Britain and N.I.", "United Kingdom")
+            .replace(/ /g, "_");
+        });
+
+        console.log($scope.newConvertedArray);
+
+        $scope.newConvertedArray.forEach(function(x) {
+            d3.select("#" + x + "")
+                    .style("fill", "red" );
+        });
+        
+        d3.select("#Somaliland")
+                .style("fill", "black");
+        d3.select("#Western_Sahara")
+                .style("fill", "black");
+        d3.select("#South_Sudan", "black")
+                .style("fill", "black");
+        d3.select("#Falkland_Islands", "black")
+                .style("fill", "black");
+        d3.select("#Former_South_Antarctic_Lands")
+                .style("fill", "black");
+
     }
 
     $scope.clear = function () {
@@ -124,4 +153,43 @@ app.controller('HomeCtrl', ['$scope', '$http',
         $scope.hundredths = 0;
         $scope.isChecked = false;
     }
+
+    var width = 1000;
+    var height = 600;
+
+    var projection = d3.geo.mercator()
+        .center([0,35])
+        .scale(175)
+        .rotate([0,0]);
+
+    var svg = d3.select(".map").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+    var path = d3.geo.path()
+                .projection(projection);
+
+    var g = svg.append("g");   
+
+    d3.json("/topoJson/tworld.json", function(error, world) {
+        if (error) return console.error(error);
+
+        var data = world;
+
+    //     for (var i = 0; i < topojson.object(world, world.objects.world).geometries.length; i++){
+    //     console.log('country # ' + i + ' is ' + topojson.object(world, world.objects.world).geometries[i].properties.name);
+    // }
+
+        g.selectAll("path")
+            .data(topojson.object(world, world.objects.world)
+                .geometries)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("id", function(d) { return d.properties.name; });
+        });
+
+    //select path with id=value, path d fill
+
+    
 }]);
