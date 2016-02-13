@@ -118,7 +118,6 @@ app.controller('HomeCtrl', ['$scope', '$http',
         });
         console.log($scope.slowArray);
 
-        // if ($scope.slowArray)
         $scope.isChecked = true;
 
         $scope.newConvertedArray = $scope.slowArray.map(function(t) {
@@ -154,17 +153,14 @@ app.controller('HomeCtrl', ['$scope', '$http',
         $scope.isChecked = false;
     }
 
-    var width = 1000;
-    var height = 600;
-
     var projection = d3.geo.mercator()
         .center([0,35])
         .scale(175)
         .rotate([0,0]);
 
     var svg = d3.select(".map").append("svg")
-                .attr("width", width)
-                .attr("height", height);
+                .attr("width", "100%")
+                .attr("viewBox", "0 0 1000 600");
 
     var path = d3.geo.path()
                 .projection(projection);
@@ -176,10 +172,6 @@ app.controller('HomeCtrl', ['$scope', '$http',
 
         var data = world;
 
-    //     for (var i = 0; i < topojson.object(world, world.objects.world).geometries.length; i++){
-    //     console.log('country # ' + i + ' is ' + topojson.object(world, world.objects.world).geometries[i].properties.name);
-    // }
-
         g.selectAll("path")
             .data(topojson.object(world, world.objects.world)
                 .geometries)
@@ -188,8 +180,4 @@ app.controller('HomeCtrl', ['$scope', '$http',
         .attr("d", path)
         .attr("id", function(d) { return d.properties.name; });
         });
-
-    //select path with id=value, path d fill
-
-    
 }]);
