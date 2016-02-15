@@ -49,7 +49,7 @@
   </form>
   
     <div class="row wayleft">
-      <div ng-show="timeForm.$error">
+      <div ng-show="!timeForm.seconds.$error.required">
         <button type="button" class="btn btn-success col-sm-6" ng-click="check()">Check</button>
       </div>
       <button type="button" class="btn btn-danger col-sm-6" ng-click="clear()">Clear</button>
