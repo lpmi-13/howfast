@@ -11,5 +11,3 @@ All data was taken from Wikipedia and is current as of January 26, 2016.
 -Make it more pretty
 
 -Add ability for the app to regularly update itself with most current data from Wikipedia
-
--Add D3.js to show a map highlighting all the countries the user is faster than
