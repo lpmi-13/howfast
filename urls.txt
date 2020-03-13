@@ -1,217 +1,179 @@
-/wiki/List_of_Afghan_records_in_athletics
-/wiki/List_of_Albanian_records_in_athletics
-/wiki/List_of_Algerian_records_in_athletics
-/wiki/List_of_American_Samoan_records_in_athletics
-/wiki/List_of_Andorran_records_in_athletics
-/wiki/List_of_Angolan_records_in_athletics
-/wiki/List_of_Anguillian_records_in_athletics
-/wiki/List_of_Antiguan_and_Barbudan_records_in_athletics
-/wiki/List_of_Argentine_records_in_athletics
-/wiki/List_of_Armenian_records_in_athletics
-/wiki/List_of_Aruban_records_in_athletics
-/wiki/List_of_Australian_records_in_athletics
-/wiki/List_of_Austrian_records_in_athletics
-/wiki/List_of_Azerbaijani_records_in_athletics
-/wiki/List_of_Bahamian_records_in_athletics
-/wiki/List_of_Bahraini_records_in_athletics
-/wiki/List_of_Bangladeshi_records_in_athletics
-/wiki/List_of_Barbadian_records_in_athletics
-/wiki/List_of_Belarusian_records_in_athletics
-/wiki/List_of_Belgian_records_in_athletics
-/wiki/List_of_Belizean_records_in_athletics
-/wiki/List_of_Beninese_records_in_athletics
-/wiki/List_of_Bermudian_records_in_athletics
-/wiki/List_of_Bhutanese_records_in_athletics
-/wiki/List_of_Bolivian_records_in_athletics
-/wiki/List_of_Bosnian_and_Herzegovinian_records_in_athletics
-/wiki/List_of_Botswana_records_in_athletics
-/wiki/List_of_Brazilian_records_in_athletics
-/wiki/List_of_British_Virgin_Islands_records_in_athletics
-/wiki/List_of_Bruneian_records_in_athletics
-/wiki/List_of_Bulgarian_records_in_athletics
-/wiki/List_of_Burkinab%C3%A9_records_in_athletics
-/wiki/List_of_Burundian_records_in_athletics
-/wiki/List_of_Cambodian_records_in_athletics
-/wiki/List_of_Cameroonian_records_in_athletics
-/wiki/List_of_Canadian_records_in_athletics
-/wiki/List_of_Cape_Verdean_records_in_athletics
-/wiki/List_of_Caymanian_records_in_athletics
-/wiki/List_of_Central_African_Republic_records_in_athletics
-/wiki/List_of_Chadian_records_in_athletics
-/wiki/List_of_Chilean_records_in_athletics
-/wiki/List_of_Chinese_records_in_athletics
-/wiki/List_of_Taiwanese_records_in_athletics
-/wiki/List_of_Colombian_records_in_athletics
-/wiki/List_of_Comorian_records_in_athletics
-/wiki/List_of_Democratic_Republic_of_the_Congo_records_in_athletics
-/wiki/List_of_Republic_of_the_Congo_records_in_athletics
-/wiki/List_of_Cook_Islands_records_in_athletics
-/wiki/List_of_Costa_Rican_records_in_athletics
-/wiki/List_of_Croatian_records_in_athletics
-/wiki/List_of_Cuban_records_in_athletics
-/wiki/List_of_Cypriot_records_in_athletics
-/wiki/List_of_Czech_records_in_athletics
-/wiki/List_of_Danish_records_in_athletics
-/wiki/List_of_Djiboutian_records_in_athletics
-/wiki/List_of_Dominica_records_in_athletics
-/wiki/List_of_Dominican_Republic_records_in_athletics
-/wiki/List_of_East_Timorese_records_in_athletics
-/wiki/List_of_Ecuadorian_records_in_athletics
-/wiki/List_of_Egyptian_records_in_athletics
-/wiki/List_of_Salvadorian_records_in_athletics
-/wiki/List_of_Equatorial_Guinean_records_in_athletics
-/wiki/List_of_Eritrean_records_in_athletics
-/wiki/List_of_Estonian_records_in_athletics
-/wiki/List_of_Ethiopian_records_in_athletics
-/wiki/List_of_Federated_States_of_Micronesia_records_in_athletics
-/wiki/List_of_Fijian_records_in_athletics
-/wiki/List_of_Finnish_records_in_athletics
-/wiki/List_of_French_records_in_athletics
-/wiki/List_of_French_Polynesian_records_in_athletics
-/wiki/List_of_Gabonese_records_in_athletics
-/wiki/List_of_Gambian_records_in_athletics
-/wiki/List_of_records_in_athletics_for_Georgia_(country)
-/wiki/List_of_German_records_in_athletics
-/wiki/List_of_Ghanaian_records_in_athletics
-/wiki/List_of_Gibraltarian_records_in_athletics
-/wiki/List_of_Greek_records_in_athletics
-/wiki/List_of_Grenadian_records_in_athletics
-/wiki/List_of_Guamanian_records_in_athletics
-/wiki/List_of_Guatemalan_records_in_athletics
-/wiki/List_of_Guinean_records_in_athletics
-/wiki/List_of_Bissau-Guinean_records_in_athletics
-/wiki/List_of_Guyanese_records_in_athletics
-/wiki/List_of_Haitian_records_in_athletics
-/wiki/List_of_Honduran_records_in_athletics
-/wiki/List_of_Hong_Kong_records_in_athletics
-/wiki/List_of_Hungarian_records_in_athletics
-/wiki/List_of_Icelandic_records_in_athletics
-/wiki/List_of_Indian_records_in_athletics
-/wiki/List_of_Indonesian_records_in_athletics
-/wiki/List_of_Iranian_records_in_athletics
-/wiki/List_of_Iraqi_records_in_athletics
-/wiki/List_of_Irish_records_in_athletics
-/wiki/List_of_Israeli_records_in_athletics
-/wiki/List_of_Italian_records_in_athletics
-/wiki/List_of_Ivorian_records_in_athletics
-/wiki/List_of_Jamaican_records_in_athletics
-/wiki/List_of_Japanese_records_in_athletics
-/wiki/List_of_Jordanian_records_in_athletics
-/wiki/List_of_Kazakhstani_records_in_athletics
-/wiki/List_of_Kenyan_records_in_athletics
-/wiki/List_of_Kiribati_records_in_athletics
-/wiki/List_of_North_Korean_records_in_athletics
-/wiki/List_of_South_Korean_records_in_athletics
-/wiki/List_of_Kosovan_records_in_athletics
-/wiki/List_of_Kyrgyzstani_records_in_athletics
-/wiki/List_of_Kuwaiti_records_in_athletics
-/wiki/List_of_Laotian_records_in_athletics
-/wiki/List_of_Latvian_records_in_athletics
-/wiki/List_of_Lebanese_records_in_athletics
-/wiki/List_of_Lesotho_records_in_athletics
-/wiki/List_of_Liberian_records_in_athletics
-/wiki/List_of_Libyan_records_in_athletics
-/wiki/List_of_Liechtensteinian_records_in_athletics
-/wiki/List_of_Lithuanian_records_in_athletics
-/wiki/List_of_Luxembourgish_records_in_athletics
-/wiki/List_of_Macanese_records_in_athletics
-/wiki/List_of_Malagasy_records_in_athletics
-/wiki/List_of_Malawian_records_in_athletics
-/wiki/List_of_Malaysian_records_in_athletics
-/wiki/List_of_Maldivian_records_in_athletics
-/wiki/List_of_Malian_records_in_athletics
-/wiki/List_of_Maltese_records_in_athletics
-/wiki/List_of_Marshallese_records_in_athletics
-/wiki/List_of_Mauritanian_records_in_athletics
-/wiki/List_of_Mauritian_records_in_athletics
-/wiki/List_of_Mexican_records_in_athletics
-/wiki/List_of_Moldovan_records_in_athletics
-/wiki/List_of_Mon%C3%A9gasque_records_in_athletics
-/wiki/List_of_Mongolian_records_in_athletics
-/wiki/List_of_Montenegrin_records_in_athletics
-/wiki/List_of_Montserrat_records_in_athletics
-/wiki/List_of_Moroccan_records_in_athletics
-/wiki/List_of_Mozambican_records_in_athletics
-/wiki/List_of_Burmese_records_in_athletics
-/wiki/List_of_Namibian_records_in_athletics
-/wiki/List_of_Nauruan_records_in_athletics
-/wiki/List_of_Nepalese_records_in_athletics
-/wiki/List_of_Dutch_records_in_athletics
-/wiki/List_of_Netherlands_Antillean_records_in_athletics
-/wiki/List_of_New_Caledonian_records_in_athletics
-/wiki/List_of_New_Zealand_records_in_athletics
-/wiki/List_of_Nicaraguan_records_in_athletics
-/wiki/List_of_Nigerien_records_in_athletics
-/wiki/List_of_Nigerian_records_in_athletics
-/wiki/List_of_Niuean_records_in_athletics
-/wiki/List_of_Norfolk_Island_records_in_athletics
-/wiki/List_of_Northern_Mariana_Islands_records_in_athletics
-/wiki/List_of_North_Macedonian_records_in_athletics
-/wiki/List_of_Norwegian_records_in_athletics
-/wiki/List_of_Omani_records_in_athletics
-/wiki/List_of_Pakistani_records_in_athletics
-/wiki/List_of_Palauan_records_in_athletics
-/wiki/List_of_Palestinian_records_in_athletics
-/wiki/List_of_Panamanian_records_in_athletics
-/wiki/List_of_Papua_New_Guinean_records_in_athletics
-/wiki/List_of_Paraguayan_records_in_athletics
-/wiki/List_of_Peruvian_records_in_athletics
-/wiki/List_of_Filipino_records_in_athletics
-/wiki/List_of_Polish_records_in_athletics
-/wiki/List_of_Portuguese_records_in_athletics
-/wiki/List_of_Puerto_Rican_records_in_track_and_field
-/wiki/List_of_Qatari_records_in_athletics
-/wiki/List_of_Romanian_records_in_athletics
-/wiki/List_of_Russian_records_in_athletics
-/wiki/List_of_Rwandan_records_in_athletics
-/wiki/List_of_Saint_Kitts_and_Nevis_records_in_athletics
-/wiki/List_of_Saint_Lucian_records_in_athletics
-/wiki/List_of_Vincentian_records_in_athletics
-/wiki/List_of_Samoan_records_in_athletics
-/wiki/List_of_Sammarinese_records_in_athletics
-/wiki/List_of_Santomean_records_in_athletics
-/wiki/List_of_Saudi_Arabian_records_in_athletics
-/wiki/List_of_Senegalese_records_in_athletics
-/wiki/List_of_Serbian_records_in_athletics
-/wiki/List_of_Seychellois_records_in_athletics
-/wiki/List_of_Sierra_Leonean_records_in_athletics
-/wiki/List_of_Singaporean_records_in_athletics
-/wiki/List_of_Slovak_records_in_athletics
-/wiki/List_of_Slovenian_records_in_athletics
-/wiki/List_of_Solomon_Islands_records_in_athletics
-/wiki/List_of_Somalian_records_in_athletics
-/wiki/List_of_South_African_records_in_athletics
-/wiki/List_of_South_Sudanese_records_in_athletics
-/wiki/List_of_Spanish_records_in_athletics
-/wiki/List_of_Sri_Lankan_records_in_athletics
-/wiki/List_of_Sudanese_records_in_athletics
-/wiki/List_of_Surinamese_records_in_athletics
-/wiki/List_of_Swazi_records_in_athletics
-/wiki/List_of_Swedish_records_in_athletics
-/wiki/List_of_Swiss_records_in_athletics
-/wiki/List_of_Syrian_records_in_athletics
-/wiki/List_of_Tajikistani_records_in_athletics
-/wiki/List_of_Tanzanian_records_in_athletics
-/wiki/List_of_Thai_records_in_athletics
-/wiki/List_of_Togolese_records_in_athletics
-/wiki/List_of_Tongan_records_in_athletics
-/wiki/List_of_Trinidad_and_Tobago_records_in_athletics
-/wiki/List_of_Tunisian_records_in_athletics
-/wiki/List_of_Turkish_records_in_athletics
-/wiki/List_of_Turkmen_records_in_athletics
-/wiki/List_of_Turks_and_Caicos_Islands_records_in_athletics
-/wiki/List_of_Tuvaluan_records_in_athletics
-/wiki/List_of_Ugandan_records_in_athletics
-/wiki/List_of_Ukrainian_records_in_athletics
-/wiki/List_of_Emirati_records_in_athletics
-/wiki/List_of_British_records_in_athletics
-/wiki/List_of_United_States_records_in_track_and_field
-/wiki/List_of_United_States_Virgin_Islands_records_in_track_and_field
-/wiki/List_of_Uruguayan_records_in_athletics
-/wiki/List_of_Uzbekistani_records_in_athletics
-/wiki/List_of_Vanuatuan_records_in_athletics
-/wiki/List_of_Venezuelan_records_in_athletics
-/wiki/List_of_Vietnamese_records_in_athletics
-/wiki/List_of_Yemeni_records_in_athletics
-/wiki/List_of_Zambian_records_in_athletics
-/wiki/List_of_Zimbabwean_records_in_athletics
+{"country": "Afghanistan" , "url": "/wiki/List_of_Afghan_records_in_athletics"}
+{"country": "Albania" , "url": "/wiki/List_of_Albanian_records_in_athletics"}
+{"country": "Algeria" , "url": "/wiki/List_of_Algerian_records_in_athletics"}
+{"country": "American Samoa" , "url": "/wiki/List_of_American_Samoan_records_in_athletics"}
+{"country": "Andorra" , "url": "/wiki/List_of_Andorran_records_in_athletics"}
+{"country": "Angola" , "url": "/wiki/List_of_Angolan_records_in_athletics"}
+{"country": "Angullia" , "url": "/wiki/List_of_Anguillian_records_in_athletics"}
+{"country": "Antigua and Barbados" , "url": "/wiki/List_of_Antiguan_and_Barbudan_records_in_athletics"}
+{"country": "Argentina" , "url": "/wiki/List_of_Argentine_records_in_athletics"}
+{"country": "Armenia" , "url": "/wiki/List_of_Armenian_records_in_athletics"}
+{"country": "Aruba" , "url": "/wiki/List_of_Aruban_records_in_athletics"}
+{"country": "Australia" , "url": "/wiki/List_of_Australian_records_in_athletics"}
+{"country": "Austrian" , "url": "/wiki/List_of_Austrian_records_in_athletics"}
+{"country": "Azerbaijan" , "url": "/wiki/List_of_Azerbaijani_records_in_athletics"}
+{"country": "The Bahamas" , "url": "/wiki/List_of_Bahamian_records_in_athletics"}
+{"country": "Bahrain" , "url": "/wiki/List_of_Bahraini_records_in_athletics"}
+{"country": "Bangladesh" , "url": "/wiki/List_of_Bangladeshi_records_in_athletics"}
+{"country": "Barbados" , "url": "/wiki/List_of_Barbadian_records_in_athletics"}
+{"country": "Belarus" , "url": "/wiki/List_of_Belarusian_records_in_athletics"}
+{"country": "Belgium" , "url": "/wiki/List_of_Belgian_records_in_athletics"}
+{"country": "Belize" , "url": "/wiki/List_of_Belizean_records_in_athletics"}
+{"country": "Benin" , "url": "/wiki/List_of_Beninese_records_in_athletics"}
+{"country": "Bermuda" , "url": "/wiki/List_of_Bermudian_records_in_athletics"}
+{"country": "Bhutan" , "url": "/wiki/List_of_Bhutanese_records_in_athletics"}
+{"country": "Bolivia" , "url": "/wiki/List_of_Bolivian_records_in_athletics"}
+{"country": "Bosnia and Herzegovina" , "url": "/wiki/List_of_Bosnian_and_Herzegovinian_records_in_athletics"}
+{"country": "Botswana" , "url": "/wiki/List_of_Botswana_records_in_athletics"}
+{"country": "Brazil" , "url": "/wiki/List_of_Brazilian_records_in_athletics"}
+{"country": "Brunei" , "url": "/wiki/List_of_Bruneian_records_in_athletics"}
+{"country": "Bulgaria" , "url": "/wiki/List_of_Bulgarian_records_in_athletics"}
+{"country": "Burkia Faso" , "url": "/wiki/List_of_Burkinab%C3%A9_records_in_athletics"}
+{"country": "Burundi" , "url": "/wiki/List_of_Burundian_records_in_athletics"}
+{"country": "Cambodia" , "url": "/wiki/List_of_Cambodian_records_in_athletics"}
+{"country": "Cameroon" , "url": "/wiki/List_of_Cameroonian_records_in_athletics"}
+{"country": "Canada" , "url": "/wiki/List_of_Canadian_records_in_athletics"}
+{"country": "Central African Republic" , "url": "/wiki/List_of_Central_African_Republic_records_in_athletics"}
+{"country": "Chad" , "url": "/wiki/List_of_Chadian_records_in_athletics"}
+{"country": "Chile" , "url": "/wiki/List_of_Chilean_records_in_athletics"}
+{"country": "China" , "url": "/wiki/List_of_Chinese_records_in_athletics"}
+{"country": "Taiwan" , "url": "/wiki/List_of_Taiwanese_records_in_athletics"}
+{"country": "Colombia" , "url": "/wiki/List_of_Colombian_records_in_athletics"}
+{"country": "Democratic Republic of the Congo" , "url": "/wiki/List_of_Democratic_Republic_of_the_Congo_records_in_athletics"}
+{"country": "Republic of the Congo"  , "url": "/wiki/List_of_Republic_of_the_Congo_records_in_athletics"}
+{"country": "Costa Rica" , "url": "/wiki/List_of_Costa_Rican_records_in_athletics"}
+{"country": "Croatia" , "url": "/wiki/List_of_Croatian_records_in_athletics"}
+{"country": "Cuba" , "url": "/wiki/List_of_Cuban_records_in_athletics"}
+{"country": "Cyprus" , "url": "/wiki/List_of_Cypriot_records_in_athletics"}
+{"country": "Czech Republic" , "url": "/wiki/List_of_Czech_records_in_athletics"}
+{"country": "Denmark" , "url": "/wiki/List_of_Danish_records_in_athletics"}
+{"country": "Djibouti" , "url": "/wiki/List_of_Djiboutian_records_in_athletics"}
+{"country": "Dominican Republic" , "url": "/wiki/List_of_Dominican_Republic_records_in_athletics"}
+{"country": "East Timor" , "url": "/wiki/List_of_East_Timorese_records_in_athletics"}
+{"country": "Ecuador" , "url": "/wiki/List_of_Ecuadorian_records_in_athletics"}
+{"country": "Egypt" , "url": "/wiki/List_of_Egyptian_records_in_athletics"}
+{"country": "El Salvador" , "url": "/wiki/List_of_Salvadorian_records_in_athletics"}
+{"country": "Equatorial Guinea" , "url": "/wiki/List_of_Equatorial_Guinean_records_in_athletics"}
+{"country": "Eritrea" , "url": "/wiki/List_of_Eritrean_records_in_athletics"}
+{"country": "Estonia" , "url": "/wiki/List_of_Estonian_records_in_athletics"}
+{"country": "Ethiopia" , "url": "/wiki/List_of_Ethiopian_records_in_athletics"}
+{"country": "Fiji" , "url": "/wiki/List_of_Fijian_records_in_athletics"}
+{"country": "Finland" , "url": "/wiki/List_of_Finnish_records_in_athletics"}
+{"country": "France" , "url": "/wiki/List_of_French_records_in_athletics"}
+{"country": "Gabon" , "url": "/wiki/List_of_Gabonese_records_in_athletics"}
+{"country": "Gambia" , "url": "/wiki/List_of_Gambian_records_in_athletics"}
+{"country": "Georgia" , "url": "/wiki/List_of_records_in_athletics_for_Georgia_(country)"}
+{"country": "Germany" , "url": "/wiki/List_of_German_records_in_athletics"}
+{"country": "Ghana" , "url": "/wiki/List_of_Ghanaian_records_in_athletics"}
+{"country": "Greece" , "url": "/wiki/List_of_Greek_records_in_athletics"}
+{"country": "Guatemala" , "url": "/wiki/List_of_Guatemalan_records_in_athletics"}
+{"country": "Guinea" , "url": "/wiki/List_of_Guinean_records_in_athletics"}
+{"country": "Guinea Bissau" , "url": "/wiki/List_of_Bissau-Guinean_records_in_athletics"}
+{"country": "Guyana" , "url": "/wiki/List_of_Guyanese_records_in_athletics"}
+{"country": "Haiti" , "url": "/wiki/List_of_Haitian_records_in_athletics"}
+{"country": "Honduras" , "url": "/wiki/List_of_Honduran_records_in_athletics"}
+{"country": "Hungary" , "url": "/wiki/List_of_Hungarian_records_in_athletics"}
+{"country": "Iceland" , "url": "/wiki/List_of_Icelandic_records_in_athletics"}
+{"country": "India" , "url": "/wiki/List_of_Indian_records_in_athletics"}
+{"country": "Indonesia" , "url": "/wiki/List_of_Indonesian_records_in_athletics"}
+{"country": "Iran" , "url": "/wiki/List_of_Iranian_records_in_athletics"}
+{"country": "Iraq" , "url": "/wiki/List_of_Iraqi_records_in_athletics"}
+{"country": "Ireland" , "url": "/wiki/List_of_Irish_records_in_athletics"}
+{"country": "Israel" , "url": "/wiki/List_of_Israeli_records_in_athletics"}
+{"country": "Italy" , "url": "/wiki/List_of_Italian_records_in_athletics"}
+{"country": "Ivory Coast" , "url": "/wiki/List_of_Ivorian_records_in_athletics"}
+{"country": "Jamaica" , "url": "/wiki/List_of_Jamaican_records_in_athletics"}
+{"country": "Japan" , "url": "/wiki/List_of_Japanese_records_in_athletics"}
+{"country": "Jordan" , "url": "/wiki/List_of_Jordanian_records_in_athletics"}
+{"country": "Kazakhstan" , "url": "/wiki/List_of_Kazakhstani_records_in_athletics"}
+{"country": "Kenya" , "url": "/wiki/List_of_Kenyan_records_in_athletics"}
+{"country": "North Korea" , "url": "/wiki/List_of_North_Korean_records_in_athletics"}
+{"country": "South Korea" , "url": "/wiki/List_of_South_Korean_records_in_athletics"}
+{"country": "Kosovo" , "url": "/wiki/List_of_Kosovan_records_in_athletics"}
+{"country": "Kyrgyzstan" , "url": "/wiki/List_of_Kyrgyzstani_records_in_athletics"}
+{"country": "Kuwait" , "url": "/wiki/List_of_Kuwaiti_records_in_athletics"}
+{"country": "Laos" , "url": "/wiki/List_of_Laotian_records_in_athletics"}
+{"country": "Latvia" , "url": "/wiki/List_of_Latvian_records_in_athletics"}
+{"country": "Lebanon" , "url": "/wiki/List_of_Lebanese_records_in_athletics"}
+{"country": "Lesotho" , "url": "/wiki/List_of_Lesotho_records_in_athletics"}
+{"country": "Liberia" , "url": "/wiki/List_of_Liberian_records_in_athletics"}
+{"country": "Libya" , "url": "/wiki/List_of_Libyan_records_in_athletics"}
+{"country": "Lithuania" , "url": "/wiki/List_of_Lithuanian_records_in_athletics"}
+{"country": "Luxembourg" , "url": "/wiki/List_of_Luxembourgish_records_in_athletics"}
+{"country": "Madagascar", "url": "/wiki/List_of_Malagasy_records_in_athletics"}
+{"country": "Malawi" , "url": "/wiki/List_of_Malawian_records_in_athletics"}
+{"country": "Malaysia" , "url": "/wiki/List_of_Malaysian_records_in_athletics"}
+{"country": "Mali" , "url": "/wiki/List_of_Malian_records_in_athletics"}
+{"country": "Malta" , "url": "/wiki/List_of_Maltese_records_in_athletics"}
+{"country": "Mauritania" , "url": "/wiki/List_of_Mauritanian_records_in_athletics"}
+{"country": "Mexico" , "url": "/wiki/List_of_Mexican_records_in_athletics"}
+{"country": "Moldova" , "url": "/wiki/List_of_Moldovan_records_in_athletics"}
+{"country": "Mongolia" , "url": "/wiki/List_of_Mongolian_records_in_athletics"}
+{"country": "Montenegro" , "url": "/wiki/List_of_Montenegrin_records_in_athletics"}
+{"country": "Morocco" , "url": "/wiki/List_of_Moroccan_records_in_athletics"}
+{"country": "Mozambique" , "url": "/wiki/List_of_Mozambican_records_in_athletics"}
+{"country": "Myanmar" , "url": "/wiki/List_of_Burmese_records_in_athletics"}
+{"country": "Namibia" , "url": "/wiki/List_of_Namibian_records_in_athletics"}
+{"country": "Nepal" , "url": "/wiki/List_of_Nepalese_records_in_athletics"}
+{"country": "Netherlands" , "url": "/wiki/List_of_Dutch_records_in_athletics"}
+{"country": "New Zealand" , "url": "/wiki/List_of_New_Zealand_records_in_athletics"}
+{"country": "Nicaragua" , "url": "/wiki/List_of_Nicaraguan_records_in_athletics"}
+{"country": "Niger" , "url": "/wiki/List_of_Nigerien_records_in_athletics"}
+{"country": "Nigeria" , "url": "/wiki/List_of_Nigerian_records_in_athletics"}
+{"country": "Norway" , "url": "/wiki/List_of_Norwegian_records_in_athletics"}
+{"country": "Oman" , "url": "/wiki/List_of_Omani_records_in_athletics"}
+{"country": "Pakistan" , "url": "/wiki/List_of_Pakistani_records_in_athletics"}
+{"country": "West Bank" , "url": "/wiki/List_of_Palestinian_records_in_athletics"}
+{"country": "Panama" , "url": "/wiki/List_of_Panamanian_records_in_athletics"}
+{"country": "Papua New Guinea" , "url": "/wiki/List_of_Papua_New_Guinean_records_in_athletics"}
+{"country": "Paraguay" , "url": "/wiki/List_of_Paraguayan_records_in_athletics"}
+{"country": "Peru" , "url": "/wiki/List_of_Peruvian_records_in_athletics"}
+{"country": "Philippines" , "url": "/wiki/List_of_Filipino_records_in_athletics"}
+{"country": "Poland" , "url": "/wiki/List_of_Polish_records_in_athletics"}
+{"country": "Portugal" , "url": "/wiki/List_of_Portuguese_records_in_athletics"}
+{"country": "Puerto Rico" , "url": "/wiki/List_of_Puerto_Rican_records_in_track_and_field"}
+{"country": "Qatar" , "url": "/wiki/List_of_Qatari_records_in_athletics"}
+{"country": "Romania" , "url": "/wiki/List_of_Romanian_records_in_athletics"}
+{"country": "Russia" , "url": "/wiki/List_of_Russian_records_in_athletics"}
+{"country": "Rwanda" , "url": "/wiki/List_of_Rwandan_records_in_athletics"}
+{"country": "Saudi Arabia" , "url": "/wiki/List_of_Saudi_Arabian_records_in_athletics"}
+{"country": "Senegal" , "url": "/wiki/List_of_Senegalese_records_in_athletics"}
+{"country": "Republic of Serbia" , "url": "/wiki/List_of_Serbian_records_in_athletics"}
+{"country": "Sierra Leone" , "url": "/wiki/List_of_Sierra_Leonean_records_in_athletics"}
+{"country": "Singapore" , "url": "/wiki/List_of_Singaporean_records_in_athletics"}
+{"country": "Slovakia" , "url": "/wiki/List_of_Slovak_records_in_athletics"}
+{"country": "Slovenia" , "url": "/wiki/List_of_Slovenian_records_in_athletics"}
+{"country": "Solomon Islands" , "url": "/wiki/List_of_Solomon_Islands_records_in_athletics"}
+{"country": "Somalia" , "url": "/wiki/List_of_Somalian_records_in_athletics"}
+{"country": "South Africa" , "url": "/wiki/List_of_South_African_records_in_athletics"}
+{"country": "South Sudan" , "url": "/wiki/List_of_South_Sudanese_records_in_athletics"}
+{"country": "Spain" , "url": "/wiki/List_of_Spanish_records_in_athletics"}
+{"country": "Sri Lanka" , "url": "/wiki/List_of_Sri_Lankan_records_in_athletics"}
+{"country": "Sudan" , "url": "/wiki/List_of_Sudanese_records_in_athletics"}
+{"country": "Suriname" , "url": "/wiki/List_of_Surinamese_records_in_athletics"}
+{"country": "Swaziland" , "url": "/wiki/List_of_Swazi_records_in_athletics"}
+{"country": "Sweden" , "url": "/wiki/List_of_Swedish_records_in_athletics"}
+{"country": "Switzerland" , "url": "/wiki/List_of_Swiss_records_in_athletics"}
+{"country": "Syria" , "url": "/wiki/List_of_Syrian_records_in_athletics"}
+{"country": "Tajikistan" , "url": "/wiki/List_of_Tajikistani_records_in_athletics"}
+{"country": "United Republic of Tanzania" , "url": "/wiki/List_of_Tanzanian_records_in_athletics"}
+{"country": "Thailand" , "url": "/wiki/List_of_Thai_records_in_athletics"}
+{"country": "Togo" , "url": "/wiki/List_of_Togolese_records_in_athletics"}
+{"country": "Tonga", "url": "/wiki/List_of_Tongan_records_in_athletics"}
+{"country": "Trinidad and Tobago" , "url": "/wiki/List_of_Trinidad_and_Tobago_records_in_athletics"}
+{"country": "Tunisia" , "url": "/wiki/List_of_Tunisian_records_in_athletics"}
+{"country": "Turkey" , "url": "/wiki/List_of_Turkish_records_in_athletics"}
+{"country": "Turkmenistan" , "url": "/wiki/List_of_Turkmen_records_in_athletics"}
+{"country": "Uganda" , "url": "/wiki/List_of_Ugandan_records_in_athletics"}
+{"country": "Ukraine" , "url": "/wiki/List_of_Ukrainian_records_in_athletics"}
+{"country": "United Arab Emirates" , "url": "/wiki/List_of_Emirati_records_in_athletics"}
+{"country": "United Kingdom" , "url": "/wiki/List_of_British_records_in_athletics"}
+{"country": "United States of America", "url": "/wiki/List_of_United_States_records_in_track_and_field"}
+{"country": "Uruguay" , "url": "/wiki/List_of_Uruguayan_records_in_athletics"}
+{"country": "Uzbekistan" , "url": "/wiki/List_of_Uzbekistani_records_in_athletics"}
+{"country": "Vanuata" , "url": "/wiki/List_of_Vanuatuan_records_in_athletics"}
+{"country": "Venezuela" , "url": "/wiki/List_of_Venezuelan_records_in_athletics"}
+{"country": "Vietnam" , "url": "/wiki/List_of_Vietnamese_records_in_athletics"}
+{"country": "Yemen" , "url": "/wiki/List_of_Yemeni_records_in_athletics"}
+{"country": "Zambia" , "url": "/wiki/List_of_Zambian_records_in_athletics"}
+{"country": "Zimbabwe" , "url": "/wiki/List_of_Zimbabwean_records_in_athletics"}
