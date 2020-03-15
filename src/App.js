@@ -1,25 +1,29 @@
 import React from 'react';
 import './App.css';
 import worlddata from './world';
-import { geoMercator, geoPath } from 'd3-geo';
+
+import Path from './components/Path';
+import Options from './components/Options';
 
 function App() {
-  const projection = geoMercator()
-  const pathGenerator = geoPath().projection(projection)
   const countries = worlddata.features
-                      .map((d, i) => <path
-                         key={'path' + i}
-                         d={pathGenerator(d)}
-                         className='countries'
-                       />)
+           .map((data, index) => {
+              return  <Path
+                  data={data}
+                  index={index}
+                />
+           });
 
   return (
     <div className="App">
       <header className="App-header">
+        <Options />
+      </header>
+      <main>
        <svg width={1000} height={500}>
          {countries}
        </svg>
-      </header>
+      </main>
     </div>
   );
 }

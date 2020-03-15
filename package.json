@@ -9,6 +9,7 @@
     "d3-geo": "^1.11.9",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "react-mobile-picker-scroll": "^0.2.14",
     "react-scripts": "3.4.0"
   },
   "scripts": {
