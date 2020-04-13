@@ -65,12 +65,12 @@ def convert_times_to_milliseconds(time):
     cleaned_time = clean_numbers(time)
 
     # this is just til wikipedia updates for the rando times take effect
-    if time == '16.38.8':
-        return minutes_to_millis(
-            '16') + seconds_to_millis('38') + hundredths_to_millis('8')
-    if time == '30.13.74':
-        return minutes_to_millis(
-            '30') + seconds_to_millis('13') + hundredths_to_millis('74')
+    #if time == '16.38.8':
+    #    return minutes_to_millis(
+    #        '16') + seconds_to_millis('38') + hundredths_to_millis('8')
+    #if time == '30.13.74':
+    #    return minutes_to_millis(
+    #        '30') + seconds_to_millis('13') + hundredths_to_millis('74')
 
     # if it's one of the shorter races (100/200/400) with hundredths of seconds
     if (len(cleaned_time) <= 5) and ('.' in cleaned_time):
@@ -125,8 +125,8 @@ def get_times_for_country(country):
             print(mens_outdoor_time)
 
             if mens_outdoor_time is not None:
-                TIME_DICT[event]['men'][nation] = convert_times_to_milliseconds(
-                    mens_outdoor_time)
+                TIME_DICT[event]['men'].append({ 'country': nation, 'time': convert_times_to_milliseconds(
+                    mens_outdoor_time)})
 
         except IndexError:
             print('no mens outdoor data')
@@ -136,16 +136,16 @@ def get_times_for_country(country):
             print(womens_outdoor_time)
 
             if womens_outdoor_time is not None:
-                TIME_DICT[event]['women'][nation] = convert_times_to_milliseconds(
-                    womens_outdoor_time)
+                TIME_DICT[event]['women'].append({ 'country': nation, 'time': convert_times_to_milliseconds(
+                    womens_outdoor_time)})
         except IndexError:
             print('no womens outdoor data')
 
 
 for event in EVENT_LIST:
     TIME_DICT[event] = {}
-    TIME_DICT[event]['men'] = {}
-    TIME_DICT[event]['women'] = {}
+    TIME_DICT[event]['men'] = [] 
+    TIME_DICT[event]['women'] = [] 
 
 for country in cleaned_data:
     get_times_for_country(country)
