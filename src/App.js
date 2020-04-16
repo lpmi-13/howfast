@@ -147,7 +147,7 @@ class App extends Component {
           </div>
         </header>
         <main>
-         <svg width={1000} height={500}>
+         <svg viewBox="0 0 2000 2000">
            {countries}
          </svg>
         </main>
