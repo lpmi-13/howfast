@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import './App.css';
+import './App.scss';
 import worlddata from './world';
 import resultData from './data/results';
 
@@ -125,19 +125,23 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Select
-              value={event}
-              onChange={handleChangeEvent}
-              options={eventOptions}
-              placeholder="please select an event"
-          />
-          <Select
-            value={gender}
-            onChange={handleChangeGender}
-            options={genderOptions}
-            placeholder="please select a gender"
-          />
-          <button onClick={compareTimes}>compare</button>
+          <div className="select-area">
+            <Select
+                className="select-box"
+                value={event}
+                onChange={handleChangeEvent}
+                options={eventOptions}
+                placeholder="please select an event"
+            />
+            <Select
+              className="select-box"
+              value={gender}
+              onChange={handleChangeGender}
+              options={genderOptions}
+              placeholder="please select a gender"
+            />
+          </div>
+          <button className="compare-button" onClick={compareTimes}>compare</button>
           <div>
             <TimePicker
               onChange={handleChangeTime}
@@ -147,7 +151,7 @@ class App extends Component {
           </div>
         </header>
         <main>
-         <svg viewBox="0 0 2000 2000">
+         <svg className="world-map" viewBox="0 0 1000 400">
            {countries}
          </svg>
         </main>

@@ -8,11 +8,24 @@ class TimePicker extends Component {
     const { onChange, optionGroups, valueGroups } = this.props;
 
     return (
-      <Picker
-        onChange={onChange}
-        optionGroups={optionGroups}
-        valueGroups={valueGroups}
-      />
+      <div className="picker-box">
+        <Picker
+          onChange={onChange}
+          optionGroups={optionGroups}
+          valueGroups={valueGroups}
+        />
+        <div className="picker-labels">
+          <div>
+              Hours
+          </div>
+          <div>
+              Minutes
+          </div>
+          <div>
+              Seconds
+          </div>
+        </div>
+      </div>
     );
   }
 }
