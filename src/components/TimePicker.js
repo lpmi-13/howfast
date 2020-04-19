@@ -7,7 +7,7 @@ class TimePicker extends Component {
   render() {
     const { eventCategory, onChange, optionGroups, valueGroups } = this.props;
 
-    return (
+    return Object.entries(optionGroups).length !== 0 && (
       <div className="picker-box">
         <Picker
           onChange={onChange}

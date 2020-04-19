@@ -53,12 +53,14 @@ class App extends Component {
       seconds: '0',
       milliseconds: '0',
     }, 
+    filteredValues: {},
     optionGroups: {
-      hours: hoursRange,
-      minutes: secondsAndMinutesRange,
-      seconds: secondsAndMinutesRange,
-      milliseconds: millisecondsRange,
-    }
+      hoursOptions: hoursRange,
+      minutesOptions: secondsAndMinutesRange,
+      secondsOptions: secondsAndMinutesRange,
+      millisecondsOptions: millisecondsRange,
+    },
+    filteredOptions: {},
   }
 
   compareTimes = () => {
@@ -74,60 +76,64 @@ class App extends Component {
     });
   }
 
-  checkLength = value => {
-    switch(value) {
-      case '100 m':
-      case '200 m':
-        return 'sprint';
-      case '400 m':
-      case '800 m':
-        return 'short';
-      case '1500 m':
-      case '5000 m':
-      case '10000 m':
-        return 'mid';
-      case 'Half marathon':
-      case 'Marathon':
-        return 'long';
-      default:
-        return 'long';
+  checkLength = ({ value }) => {
+    if (value != null) {
+      switch(value) {
+        case '100 metres':
+        case '200 metres':
+          return 'sprint';
+        case '400 metres':
+        case '800 metres':
+          return 'short';
+        case '1500 metres':
+        case '5000 metres':
+        case '10,000 metres':
+          return 'mid';
+        case 'Half marathon':
+        case 'Marathon':
+          return 'long';
+        default:
+          return 'short';
+      }
     }
+    return 'mid';
   }
 
   handleChangeEvent = value => {
 
+    console.log(this.checkLength(value));
     // for distances like 200 m, we don't care about hours or minutes
     if (this.checkLength(value) === 'sprint') {
-      const { hours, minutes, ...restOptions } = this.state.optionGroups;
+      const { hoursOptions, minutesOptions, ...restOptions } = this.state.optionGroups;
       const { hours, minutes, ...restValues } = this.state.valueGroups;
         this.setState({
-          optionGroups: restOptions,
-          valueGroups: restValues,
+          filteredOptions: restOptions,
+          filteredValues: restValues,
         });
         // for distances like 800 m, we don't care about hours
     } else if (this.checkLength(value) === 'short') {
-      const { hours, ...restOptions } = this.state.optionGroups;
+      const { hoursOptions, ...restOptions } = this.state.optionGroups;
       const { hours, ...restValues } = this.state.valueGroups;
         this.setState({
-          optionGroups: restOptions,
-          valueGroups: restValues,
+          filteredOptions: restOptions,
+          filteredValues: restValues,
         });
 
         // for distances like 5000 m, we don't care about hours or milliseconds
       } else if (this.checkLength(value) === 'mid') {
-        const { hours, milliseconds, ...restOptions } = this.state.optionGroups;
+        const { hoursOptions, millisecondsOptions, ...restOptions } = this.state.optionGroups;
         const { hours, milliseconds, ...restValues } = this.state.valueGroups;
         this.setState({
-          optionGroups: restOptions,
-          valueGroups: restValues,
+          filteredOptions: restOptions,
+          filteredValues: restValues,
         });
         // in all other cases, give us everything except milliseconds
     } else {
-      const { milliseconds, ...restOptions } = this.state.optionGroups;
+      const { millisecondsOptions, ...restOptions } = this.state.optionGroups;
       const { milliseconds, ...restValues } = this.state.valueGroups;
         this.setState({
-          optionGroups: restOptions,
-          valueGroups: restValues,
+          filteredOptions: restOptions,
+          filteredValues: restValues,
          });
     }
 
@@ -177,7 +183,7 @@ class App extends Component {
       state: {
         event,
         gender,
-        optionGroups,
+        filteredOptions,
         valueGroups,
       }
     } = this;
@@ -205,8 +211,8 @@ class App extends Component {
           <div>
             <TimePicker
               onChange={handleChangeTime}
-              eventCategory={checkLength(event)}
-              optionGroups={optionGroups}
+              eventCategory={event ? checkLength(event) : 'short'}
+              optionGroups={filteredOptions}
               valueGroups={valueGroups}
             />
           </div>
