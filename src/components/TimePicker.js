@@ -5,7 +5,7 @@ import Picker from 'react-mobile-picker-scroll';
 class TimePicker extends Component {
 
   render() {
-    const { onChange, optionGroups, valueGroups } = this.props;
+    const { eventCategory, onChange, optionGroups, valueGroups } = this.props;
 
     return (
       <div className="picker-box">
@@ -15,15 +15,24 @@ class TimePicker extends Component {
           valueGroups={valueGroups}
         />
         <div className="picker-labels">
+          { eventCategory === 'long' && (
           <div>
               Hours
           </div>
+          )}
+          { eventCategory !== 'sprint' && (
           <div>
               Minutes
           </div>
+          )}
           <div>
               Seconds
           </div>
+          { (eventCategory === 'sprint' || eventCategory === 'short') && (
+          <div>
+              Milliseconds
+          </div>
+          )}
         </div>
       </div>
     );

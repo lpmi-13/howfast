@@ -3,17 +3,20 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
+import os
 
 BASE_URL = 'https://en.wikipedia.org'
+OUTPUT_PATH = 'src/data'
+OUTPUT_FILE = 'results.json'
 
 EVENT_LIST = [
-    '100 m',
-    '200 m',
-    '400 m',
-    '800 m',
-    '1500 m',
-    '5000 m',
-    '10000 m',
+    '100 metres',
+    '200 metres',
+    '400 metres',
+    '800 metres',
+    '1500 metres',
+    '5000 metres',
+    '10,000 metres',
     'Half marathon',
     'Marathon'
 ]
@@ -64,14 +67,6 @@ def convert_times_to_milliseconds(time):
 
     cleaned_time = clean_numbers(time)
 
-    # this is just til wikipedia updates for the rando times take effect
-    #if time == '16.38.8':
-    #    return minutes_to_millis(
-    #        '16') + seconds_to_millis('38') + hundredths_to_millis('8')
-    #if time == '30.13.74':
-    #    return minutes_to_millis(
-    #        '30') + seconds_to_millis('13') + hundredths_to_millis('74')
-
     # if it's one of the shorter races (100/200/400) with hundredths of seconds
     if (len(cleaned_time) <= 5) and ('.' in cleaned_time):
         seconds, hundredths = time.split('.')
@@ -106,6 +101,8 @@ def convert_times_to_milliseconds(time):
         return hours_to_millis(
             hours) + minutes_to_millis(minutes) + seconds_to_millis(seconds)
 
+def matching(link, event):
+    return link.get('title') == event
 
 def get_times_for_country(country):
     # grab the page data and parse it
@@ -118,37 +115,39 @@ def get_times_for_country(country):
 
     for event in EVENT_LIST:
 
-        event_data = soup.find_all("a", string='{}'.format(event))
+        event_data = soup.find_all("a")
+        # this is a hack cuz the brits also list all walking events
+        filtered_links = [link for link in event_data if link.get('title') == event]
 
         try:
-            mens_outdoor_time = get_time_from_html(event_data[0])
+            mens_outdoor_time = get_time_from_html(filtered_links[0])
             print(mens_outdoor_time)
 
             if mens_outdoor_time is not None:
-                TIME_DICT[event]['men'].append({ 'country': nation, 'time': convert_times_to_milliseconds(
-                    mens_outdoor_time)})
+                TIME_DICT[event]['men'][nation] = convert_times_to_milliseconds(
+                    mens_outdoor_time)
 
         except IndexError:
             print('no mens outdoor data')
 
         try:
-            womens_outdoor_time = get_time_from_html(event_data[1])
+            womens_outdoor_time = get_time_from_html(filtered_links[1])
             print(womens_outdoor_time)
 
             if womens_outdoor_time is not None:
-                TIME_DICT[event]['women'].append({ 'country': nation, 'time': convert_times_to_milliseconds(
-                    womens_outdoor_time)})
+                TIME_DICT[event]['women'][nation] = convert_times_to_milliseconds(
+                    womens_outdoor_time)
         except IndexError:
             print('no womens outdoor data')
 
 
 for event in EVENT_LIST:
     TIME_DICT[event] = {}
-    TIME_DICT[event]['men'] = [] 
-    TIME_DICT[event]['women'] = [] 
+    TIME_DICT[event]['men'] = {}
+    TIME_DICT[event]['women'] = {}
 
 for country in cleaned_data:
     get_times_for_country(country)
 
-with open('results.json', 'w') as output_file:
+with open(os.path.join(OUTPUT_PATH, OUTPUT_FILE), 'w') as output_file:
     output_file.write(json.dumps(TIME_DICT))

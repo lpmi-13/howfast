@@ -43,18 +43,21 @@ class App extends Component {
   state = {
     event: null,
     gender: null,
+    length: null,
     userTime: null,
     timesToBeat: null,
     slowerCountries: [],
     valueGroups: {
       hours: '0',
       minutes: '0',
-      seconds: '0'
+      seconds: '0',
+      milliseconds: '0',
     }, 
     optionGroups: {
       hours: hoursRange,
       minutes: secondsAndMinutesRange,
-      seconds: secondsAndMinutesRange
+      seconds: secondsAndMinutesRange,
+      milliseconds: millisecondsRange,
     }
   }
 
@@ -71,7 +74,63 @@ class App extends Component {
     });
   }
 
+  checkLength = value => {
+    switch(value) {
+      case '100 m':
+      case '200 m':
+        return 'sprint';
+      case '400 m':
+      case '800 m':
+        return 'short';
+      case '1500 m':
+      case '5000 m':
+      case '10000 m':
+        return 'mid';
+      case 'Half marathon':
+      case 'Marathon':
+        return 'long';
+      default:
+        return 'long';
+    }
+  }
+
   handleChangeEvent = value => {
+
+    // for distances like 200 m, we don't care about hours or minutes
+    if (this.checkLength(value) === 'sprint') {
+      const { hours, minutes, ...restOptions } = this.state.optionGroups;
+      const { hours, minutes, ...restValues } = this.state.valueGroups;
+        this.setState({
+          optionGroups: restOptions,
+          valueGroups: restValues,
+        });
+        // for distances like 800 m, we don't care about hours
+    } else if (this.checkLength(value) === 'short') {
+      const { hours, ...restOptions } = this.state.optionGroups;
+      const { hours, ...restValues } = this.state.valueGroups;
+        this.setState({
+          optionGroups: restOptions,
+          valueGroups: restValues,
+        });
+
+        // for distances like 5000 m, we don't care about hours or milliseconds
+      } else if (this.checkLength(value) === 'mid') {
+        const { hours, milliseconds, ...restOptions } = this.state.optionGroups;
+        const { hours, milliseconds, ...restValues } = this.state.valueGroups;
+        this.setState({
+          optionGroups: restOptions,
+          valueGroups: restValues,
+        });
+        // in all other cases, give us everything except milliseconds
+    } else {
+      const { milliseconds, ...restOptions } = this.state.optionGroups;
+      const { milliseconds, ...restValues } = this.state.valueGroups;
+        this.setState({
+          optionGroups: restOptions,
+          valueGroups: restValues,
+         });
+    }
+
     this.setState({
       event: value,
       userTime: null,
@@ -110,6 +169,7 @@ class App extends Component {
              });
 
     const {
+      checkLength,
       compareTimes,
       handleChangeEvent,
       handleChangeGender,
@@ -131,20 +191,21 @@ class App extends Component {
                 value={event}
                 onChange={handleChangeEvent}
                 options={eventOptions}
-                placeholder="please select an event"
+                placeholder="select event"
             />
             <Select
               className="select-box"
               value={gender}
               onChange={handleChangeGender}
               options={genderOptions}
-              placeholder="please select a gender"
+              placeholder="select gender"
             />
           </div>
-          <button className="compare-button" onClick={compareTimes}>compare</button>
+          <button className="compare-button" disabled={!gender || !event} onClick={compareTimes}>compare</button>
           <div>
             <TimePicker
               onChange={handleChangeTime}
+              eventCategory={checkLength(event)}
               optionGroups={optionGroups}
               valueGroups={valueGroups}
             />
