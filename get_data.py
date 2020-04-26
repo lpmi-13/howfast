@@ -31,18 +31,18 @@ with open('urls.txt', 'r') as input_file:
 
 cleaned_data = [json.loads(line) for line in data]
 
-# clean and return the time from the html
-# unfortunately very tightly coupled to the structure of the wikipedia html :(
-
 
 def get_time_from_html(data):
+    '''
+    clean and return the time from the html
+    unfortunately very tightly coupled to the structure of the wikipedia html :(
+    '''
     raw_time = data.parent.next_sibling.next_sibling.text.strip()
     return raw_time.split(' ')[0] or None
 
-# because sometimes the times will have weird chars like "+" at the end
-
 
 def clean_numbers(time):
+    # because sometimes the times will have weird chars like "+" at the end
     return re.sub("[^0-9.:]", "", time)
 
 
@@ -61,11 +61,9 @@ def minutes_to_millis(time):
 def hours_to_millis(time):
     return int(time) * 60 * 60 * 1000
 
-# this is to standardize all the measurements into milliseconds
-
 
 def convert_times_to_milliseconds(time):
-
+    # this is to standardize all the measurements into milliseconds
     cleaned_time = clean_numbers(time)
 
     # if it's one of the shorter races (100/200/400) with hundredths of seconds
@@ -102,13 +100,15 @@ def convert_times_to_milliseconds(time):
         return hours_to_millis(
             hours) + minutes_to_millis(minutes) + seconds_to_millis(seconds)
 
+
 def matching(link, event):
     return link.get('title') == event
+
 
 def get_times_for_country(country):
     # grab the page data and parse it
     r = requests.get(BASE_URL + country['url'])
-    soup = BeautifulSoup(r.text)
+    soup = BeautifulSoup(r.text, 'html.parser')
 
     nation = country['country']
 
@@ -118,7 +118,8 @@ def get_times_for_country(country):
 
         event_data = soup.find_all("a")
         # this is a hack cuz the brits also list all walking events
-        filtered_links = [link for link in event_data if link.get('title') == event]
+        filtered_links = [
+            link for link in event_data if link.get('title') == event]
 
         try:
             mens_outdoor_time = get_time_from_html(filtered_links[0])
