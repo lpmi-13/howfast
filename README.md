@@ -1,12 +1,8 @@
 # howfast
 
-
-
 A simple React app that shows users how many countries' national records in track and field they are faster than.
 
 e.g., entering a time of 15:40 for the 5,000 meters returns "you are faster than the runners of 20 countries..." and lists them.
-
-All data was taken from Wikipedia and is current as of March 12, 2020.
 
 ## Local developlment
 
@@ -21,10 +17,10 @@ $ npm start
 $ python grab_data.py
 ```
 
-...outputs to local file `results.json`
+...updates the datetime in the json array for display on the site
 
 
 ### the old angularJS app
 
 This involved a database and other backendy stuff, so have moved it to the `legacy`
-branch if anyone is curious.
+tag if anyone is curious.

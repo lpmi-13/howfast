@@ -155,7 +155,7 @@ for country in cleaned_data:
 current_date = datetime.datetime.now()
 
 date_for_display = "Times current as of {} at {}".format(
-    current_date.strftime("%b %d %Y"), current_date.strftime.strftime("%H:%M"))
+    current_date.strftime("%b %d %Y"), current_date.strftime("%H:%M"))
 
 TIME_DICT['generated_at'] = date_for_display
 

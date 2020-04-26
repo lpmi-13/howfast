@@ -241,6 +241,7 @@ class App extends Component {
            {countries}
          </svg>
         </main>
+        { slowerCountries.length <= 0 && <div className="date-stamp">{resultData['generated_at']}</div> }
         { slowerCountries.length > 0 && <div className="faster-than">{`you're faster than ${slowerCountries.length} countries`}</div>}
       </div>
     )
