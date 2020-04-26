@@ -212,6 +212,7 @@ class App extends Component {
         <header className="App-header">
           <div className="select-area">
             <Select
+                aria-label="select event"
                 className="select-box"
                 value={event}
                 onChange={handleChangeEvent}
@@ -227,6 +228,7 @@ class App extends Component {
                 })}
             />
             <Select
+              aria-label="select gender"
               className="select-box"
               value={gender}
               onChange={handleChangeGender}
