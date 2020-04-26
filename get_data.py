@@ -1,9 +1,10 @@
 #! /bin/python
-import requests
 from bs4 import BeautifulSoup
+import datetime
 import json
-import re
 import os
+import re
+import requests
 
 BASE_URL = 'https://en.wikipedia.org'
 OUTPUT_PATH = 'src/data'
@@ -141,6 +142,7 @@ def get_times_for_country(country):
             print('no womens outdoor data')
 
 
+# add these to the dicts so we dont get key errors
 for event in EVENT_LIST:
     TIME_DICT[event] = {}
     TIME_DICT[event]['men'] = {}
@@ -148,6 +150,14 @@ for event in EVENT_LIST:
 
 for country in cleaned_data:
     get_times_for_country(country)
+
+# generate a datestamp for display on the site
+current_date = datetime.datetime.now()
+
+date_for_display = "Times current as of {} at {}".format(
+    current_date.strftime("%b %d %Y"), current_date.strftime.strftime("%H:%M"))
+
+TIME_DICT['generated_at'] = date_for_display
 
 with open(os.path.join(OUTPUT_PATH, OUTPUT_FILE), 'w') as output_file:
     output_file.write(json.dumps(TIME_DICT))

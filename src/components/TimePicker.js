@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
 import Picker from 'react-mobile-picker-scroll';
+import classnames from 'classnames';
 
 // keeping this as a passthrough component for now since we might want to add to it later
 class TimePicker extends Component {
 
   render() {
-    const { eventCategory, onChange, optionGroups, valueGroups } = this.props;
+    const { eventCategory, isShown, onChange, optionGroups, valueGroups } = this.props;
 
-    return Object.entries(optionGroups).length !== 0 && (
-      <div className="picker-box">
+    return (
+      <div className={classnames("picker-box", isShown ? 'show' : 'hidden')}>
         <Picker
           onChange={onChange}
           optionGroups={optionGroups}

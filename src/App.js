@@ -6,6 +6,7 @@ import resultData from './data/results';
 
 import Path from './components/Path';
 import TimePicker from './components/TimePicker';
+import Info from './components/Info';
 
 const eventOptions = Object.keys(resultData).map(event => {
   return {value: event, label: event}
@@ -16,11 +17,14 @@ const genderOptions = [
   { value: 'women', label: 'women'},
 ]
 
+const convertToInteger = value => parseInt(value, 10);
+
 const timeToMilliseconds = times => {
-  const seconds =  1000 * times.seconds;
-  const minutes = 1000 * 60 * times.minutes;
-  const hours = 1000 * 60 * 60 * times.hours;
-  return seconds + minutes + hours;
+  const milliseconds = convertToInteger(times.millisecondsOptions) || 0;
+  const seconds =  convertToInteger(1000 * times.secondsOptions) || 0;
+  const minutes = convertToInteger(1000 * 60 * times.minutesOptions) || 0;
+  const hours = convertToInteger(1000 * 60 * 60 * times.hoursOptions) || 0;
+  return milliseconds + seconds + minutes + hours;
 }
 
 // find all the times that are slower than the user's time
@@ -101,51 +105,65 @@ class App extends Component {
 
   handleChangeEvent = value => {
 
-    console.log(this.checkLength(value));
     // for distances like 200 m, we don't care about hours or minutes
     if (this.checkLength(value) === 'sprint') {
-      const { hoursOptions, minutesOptions, ...restOptions } = this.state.optionGroups;
-      const { hours, minutes, ...restValues } = this.state.valueGroups;
+        const { hoursOptions, minutesOptions, ...restOptions } = this.state.optionGroups;
+        const { hours, minutes, ...restValues } = this.state.valueGroups;
         this.setState({
           filteredOptions: restOptions,
           filteredValues: restValues,
         });
-        // for distances like 800 m, we don't care about hours
+    // for distances like 800 m, we don't care about hours
     } else if (this.checkLength(value) === 'short') {
-      const { hoursOptions, ...restOptions } = this.state.optionGroups;
-      const { hours, ...restValues } = this.state.valueGroups;
+        const { hoursOptions, ...restOptions } = this.state.optionGroups;
+        const { hours, ...restValues } = this.state.valueGroups;
         this.setState({
           filteredOptions: restOptions,
           filteredValues: restValues,
         });
-
-        // for distances like 5000 m, we don't care about hours or milliseconds
-      } else if (this.checkLength(value) === 'mid') {
+    // for distances like 5000 m, we don't care about hours or milliseconds
+    } else if (this.checkLength(value) === 'mid') {
         const { hoursOptions, millisecondsOptions, ...restOptions } = this.state.optionGroups;
         const { hours, milliseconds, ...restValues } = this.state.valueGroups;
         this.setState({
           filteredOptions: restOptions,
           filteredValues: restValues,
         });
-        // in all other cases, give us everything except milliseconds
+    // in all other cases, give us everything except milliseconds
     } else {
-      const { millisecondsOptions, ...restOptions } = this.state.optionGroups;
-      const { milliseconds, ...restValues } = this.state.valueGroups;
+        const { millisecondsOptions, ...restOptions } = this.state.optionGroups;
+        const { milliseconds, ...restValues } = this.state.valueGroups;
         this.setState({
           filteredOptions: restOptions,
           filteredValues: restValues,
-         });
+        });
     }
 
     this.setState({
       event: value,
-      userTime: null,
+      slowerCountries: [],
       timesToBeat: null,
+      userTime: 0,
+      valueGroups: {
+        hours: '0',
+        minutes: '0',
+        seconds: '0',
+        milliseconds: '0',
+      }
     });
   }
 
   handleChangeGender = value => {
-    this.setState({ gender: value })
+    this.setState({
+      gender: value,
+      slowerCountries: [],
+      valueGroups: {
+        hours: '0',
+        minutes: '0',
+        seconds: '0',
+        milliseconds: '0',
+      }
+    });
   }
 
     // Update the value in response to user picking time
@@ -154,7 +172,7 @@ class App extends Component {
       valueGroups: {
         ...valueGroups,
         [name]: value
-      }
+      },
     }));
 
     this.setState({ userTime: timeToMilliseconds(this.state.valueGroups)});
@@ -184,6 +202,7 @@ class App extends Component {
         event,
         gender,
         filteredOptions,
+        slowerCountries,
         valueGroups,
       }
     } = this;
@@ -206,22 +225,23 @@ class App extends Component {
               options={genderOptions}
               placeholder="select gender"
             />
+            <button className="compare-button" disabled={!gender || !event} onClick={compareTimes}>compare</button>
           </div>
-          <button className="compare-button" disabled={!gender || !event} onClick={compareTimes}>compare</button>
-          <div>
-            <TimePicker
-              onChange={handleChangeTime}
-              eventCategory={event ? checkLength(event) : 'short'}
-              optionGroups={filteredOptions}
-              valueGroups={valueGroups}
-            />
-          </div>
+          <Info isShown={Object.entries(filteredOptions).length <= 0}/>
+          <TimePicker
+            eventCategory={event ? checkLength(event) : 'short'}
+            isShown={Object.entries(filteredOptions).length > 0}
+            onChange={handleChangeTime}
+            optionGroups={filteredOptions}
+            valueGroups={valueGroups}
+          />
         </header>
         <main>
          <svg className="world-map" viewBox="0 0 1000 400">
            {countries}
          </svg>
         </main>
+        { slowerCountries.length > 0 && <div className="faster-than">{`you're faster than ${slowerCountries.length} countries`}</div>}
       </div>
     )
   }
