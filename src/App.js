@@ -9,7 +9,7 @@ import TimePicker from './components/TimePicker';
 import Info from './components/Info';
 
 const eventOptions = Object.keys(resultData).map(event => {
-  return {value: event, label: event}
+  return event !== 'generated_at' && {value: event, label: event}
 });
 
 const genderOptions = [
@@ -217,6 +217,14 @@ class App extends Component {
                 onChange={handleChangeEvent}
                 options={eventOptions}
                 placeholder="select event"
+                theme={theme => ({
+                  ...theme,
+                  colors: {
+                    ...theme.colors,
+                    primary25: '#2684FF',
+                    neutral50: 'black',
+                  },
+                })}
             />
             <Select
               className="select-box"
@@ -224,6 +232,14 @@ class App extends Component {
               onChange={handleChangeGender}
               options={genderOptions}
               placeholder="select gender"
+              theme={theme => ({
+                ...theme,
+                colors: {
+                  ...theme.colors,
+                  primary25: '#2684FF',
+                  neutral50: 'black',
+                },
+              })}
             />
             <button className="compare-button" disabled={!gender || !event} onClick={compareTimes}>compare</button>
           </div>
