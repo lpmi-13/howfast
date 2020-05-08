@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import Select from 'react-select';
+import React, { Component, Fragment } from 'react';
 import './App.scss';
 import worlddata from './world';
 import resultData from './data/results';
 
-import Path from './components/Path';
-import TimePicker from './components/TimePicker';
 import Info from './components/Info';
+import Path from './components/Path';
+import SelectElement from './components/SelectElement';
+import TimePicker from './components/TimePicker';
 
 const eventOptions = Object.keys(resultData).map(event => {
   return event !== 'generated_at' && {value: event, label: event}
@@ -211,37 +211,19 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <div className="select-area">
-            <Select
-                aria-label="select event"
-                className="select-box"
-                value={event}
-                onChange={handleChangeEvent}
-                options={eventOptions}
+            <SelectElement
+                ariaLabel="select event"
+                handleChange={handleChangeEvent}
+                optionsValue={eventOptions}
                 placeholder="select event"
-                theme={theme => ({
-                  ...theme,
-                  colors: {
-                    ...theme.colors,
-                    primary25: '#2684FF',
-                    neutral50: 'black',
-                  },
-                })}
+                value={event}
             />
-            <Select
-              aria-label="select gender"
-              className="select-box"
-              value={gender}
-              onChange={handleChangeGender}
-              options={genderOptions}
+            <SelectElement
+              ariaLabel="select gender"
+              handleChange={handleChangeGender}
+              optionsValue={genderOptions}
               placeholder="select gender"
-              theme={theme => ({
-                ...theme,
-                colors: {
-                  ...theme.colors,
-                  primary25: '#2684FF',
-                  neutral50: 'black',
-                },
-              })}
+              value={gender}
             />
             <button className="compare-button" disabled={!gender || !event} onClick={compareTimes}>compare</button>
           </div>
@@ -260,7 +242,14 @@ class App extends Component {
          </svg>
         </main>
         { slowerCountries.length <= 0 && <div className="date-stamp">{resultData['generated_at']}</div> }
-        { slowerCountries.length > 0 && <div className="faster-than">{`you're faster than ${slowerCountries.length} countries`}</div>}
+        { slowerCountries.length > 0 && 
+          <Fragment>
+            <div className="faster-than">{`you're faster than ${slowerCountries.length} countries`}</div>
+            <div className="countries-list">
+              {slowerCountries.map((country) => <div className="country">{country}</div>)}
+            </div>
+          </Fragment>
+        }
       </div>
     )
   }
