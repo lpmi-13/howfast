@@ -22,7 +22,7 @@ EVENT_LIST = [
     'Marathon'
 ]
 
-TIME_DICT = {}
+TIME_DICT = {'events': {}, 'generated_at': ''}
 
 
 # first, read in the file of national record URLs from wikipedia
@@ -126,8 +126,8 @@ def get_times_for_country(country):
             print(mens_outdoor_time)
 
             if mens_outdoor_time is not None:
-                TIME_DICT[event]['men'][nation] = convert_times_to_milliseconds(
-                    mens_outdoor_time)
+                TIME_DICT['events'][event]['men'].append([nation, convert_times_to_milliseconds(
+                    mens_outdoor_time)])
 
         except IndexError:
             print('no mens outdoor data')
@@ -137,26 +137,33 @@ def get_times_for_country(country):
             print(womens_outdoor_time)
 
             if womens_outdoor_time is not None:
-                TIME_DICT[event]['women'][nation] = convert_times_to_milliseconds(
-                    womens_outdoor_time)
+                TIME_DICT['events'][event]['women'].append([nation, convert_times_to_milliseconds(
+                    womens_outdoor_time)])
         except IndexError:
             print('no womens outdoor data')
 
 
 # add these to the dicts so we dont get key errors
 for event in EVENT_LIST:
-    TIME_DICT[event] = {}
-    TIME_DICT[event]['men'] = {}
-    TIME_DICT[event]['women'] = {}
+    TIME_DICT['events'][event] = {}
+    TIME_DICT['events'][event]['men'] = [] 
+    TIME_DICT['events'][event]['women'] = [] 
 
 for country in cleaned_data:
     get_times_for_country(country)
 
+# now sort the times per gender per event so we can map over them in the frontend without needing to sort
+for event in TIME_DICT['events']:
+    temp_list = []
+    for gender_list in TIME_DICT['events'][event]:
+        times_list = TIME_DICT['events'][event][gender_list]
+        TIME_DICT['events'][event][gender_list] = sorted(times_list, key=lambda entry: entry[1]) 
+
 # generate a datestamp for display on the site
 current_date = datetime.datetime.now()
 
-date_for_display = "Times current as of {} at {}".format(
-    current_date.strftime("%b %d %Y"), current_date.strftime("%H:%M"))
+date_for_display = "Times current as of {}".format(
+    current_date.strftime("%b %d %Y"))
 
 TIME_DICT['generated_at'] = date_for_display
 

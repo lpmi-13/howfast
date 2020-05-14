@@ -17,7 +17,6 @@ path.selected {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1.25em;
 
   @include respond-to("small") {
     margin-bottom: 1.25em;
@@ -104,7 +103,11 @@ main {
 
 .info-box {
   color: white;
-  margin: 1em 5em;
+  margin: 1em 3em;
+
+  @include respond-to("small") {
+    max-width: 35%;
+  }
 }
 
 .picker-labels {
@@ -116,5 +119,36 @@ main {
 
   @include respond-to("small") {
     font-size: inherit;
+  }
+}
+
+.picker-scroller, .picker-container, .picker-inner {
+  perspective: 200px;
+}
+
+.picker-item {
+  background: white;
+  border: 2px solid black;
+}
+
+.countries-list {
+  color: white;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2em;
+
+  .country {
+    margin: 0.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .name, .time {
+      margin: 0.25em;
+    }
   }
 }

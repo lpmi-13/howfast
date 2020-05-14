@@ -3,13 +3,14 @@ import './App.scss';
 import worlddata from './world';
 import resultData from './data/results';
 
+import Country from './components/Country';
 import Info from './components/Info';
 import Path from './components/Path';
 import SelectElement from './components/SelectElement';
 import TimePicker from './components/TimePicker';
 
-const eventOptions = Object.keys(resultData).map(event => {
-  return event !== 'generated_at' && {value: event, label: event}
+const eventOptions = Object.keys(resultData['events']).map(event => {
+  return {value: event, label: event}
 });
 
 const genderOptions = [
@@ -31,6 +32,12 @@ const timeToMilliseconds = times => {
 const findSlowerTimes = ( timesToBeat, userTime ) => {
   return Object.keys(timesToBeat).filter(country => timesToBeat[country] > userTime)
 }
+
+const findSlowerTimesArray = (timesToBeat, userTime ) => {
+  return (timesToBeat).filter(country => country[1] > userTime)
+}
+
+const pullOutNames = countryArray => countryArray.map(country => country[0])
 
 const createTimeRange = length => [...Array(length).keys()].map(t => t.toString());
 
@@ -73,8 +80,8 @@ class App extends Component {
       gender,
       userTime,
     } = this.state;
-    const timesToBeat= resultData[event.value][gender.value];
-    const slowerCountries = findSlowerTimes(timesToBeat, userTime);
+    const timesToBeat= resultData['events'][event.value][gender.value];
+    const slowerCountries = findSlowerTimesArray(timesToBeat, userTime);
     this.setState({
       slowerCountries,
     });
@@ -188,7 +195,7 @@ class App extends Component {
                     key={index}
                     data={data}
                     index={index}
-                    pathSelected={this.state.slowerCountries.includes(data.properties.name)}
+                    pathSelected={pullOutNames(this.state.slowerCountries).includes(data.properties.name)}
                   />
              });
 
@@ -244,9 +251,15 @@ class App extends Component {
         { slowerCountries.length <= 0 && <div className="date-stamp">{resultData['generated_at']}</div> }
         { slowerCountries.length > 0 && 
           <Fragment>
-            <div className="faster-than">{`you're faster than ${slowerCountries.length} countries`}</div>
+            <div className="faster-than">{
+            `you're faster than ${slowerCountries.length > 1 ? 'these' : 'this'}
+            ${slowerCountries.length}
+            ${slowerCountries.length > 1 ? 'countries' : 'country'} `
+            }</div>
             <div className="countries-list">
-              {slowerCountries.map((country) => <div className="country">{country}</div>)}
+              {slowerCountries
+                  // sorted in the python code, so can just map here to show descending times
+                  .map(country => <Country key={country[0]} country={country} />)}
             </div>
           </Fragment>
         }

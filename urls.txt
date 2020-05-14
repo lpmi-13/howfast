@@ -10,7 +10,7 @@
 {"country": "Armenia" , "url": "/wiki/List_of_Armenian_records_in_athletics"}
 {"country": "Aruba" , "url": "/wiki/List_of_Aruban_records_in_athletics"}
 {"country": "Australia" , "url": "/wiki/List_of_Australian_records_in_athletics"}
-{"country": "Austrian" , "url": "/wiki/List_of_Austrian_records_in_athletics"}
+{"country": "Austria" , "url": "/wiki/List_of_Austrian_records_in_athletics"}
 {"country": "Azerbaijan" , "url": "/wiki/List_of_Azerbaijani_records_in_athletics"}
 {"country": "The Bahamas" , "url": "/wiki/List_of_Bahamian_records_in_athletics"}
 {"country": "Bahrain" , "url": "/wiki/List_of_Bahraini_records_in_athletics"}
