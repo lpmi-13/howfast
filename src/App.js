@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import classnames from 'classnames';
 import './App.scss';
 import worlddata from './world';
 import resultData from './data/results';
@@ -8,6 +9,7 @@ import Info from './components/Info';
 import Path from './components/Path';
 import SelectElement from './components/SelectElement';
 import TimePicker from './components/TimePicker';
+import { hoursRange, millisecondsRange, secondsAndMinutesRange, timeToMilliseconds } from './utils/timeConversions';
 
 const eventOptions = Object.keys(resultData['events']).map(event => {
   return {value: event, label: event}
@@ -18,36 +20,12 @@ const genderOptions = [
   { value: 'women', label: 'women'},
 ]
 
-const convertToInteger = value => parseInt(value, 10);
-
-const timeToMilliseconds = times => {
-  const milliseconds = convertToInteger(times.millisecondsOptions) || 0;
-  const seconds =  convertToInteger(1000 * times.secondsOptions) || 0;
-  const minutes = convertToInteger(1000 * 60 * times.minutesOptions) || 0;
-  const hours = convertToInteger(1000 * 60 * 60 * times.hoursOptions) || 0;
-  return milliseconds + seconds + minutes + hours;
-}
-
 // find all the times that are slower than the user's time
-const findSlowerTimes = ( timesToBeat, userTime ) => {
-  return Object.keys(timesToBeat).filter(country => timesToBeat[country] > userTime)
-}
-
 const findSlowerTimesArray = (timesToBeat, userTime ) => {
   return (timesToBeat).filter(country => country[1] > userTime)
 }
 
 const pullOutNames = countryArray => countryArray.map(country => country[0])
-
-const createTimeRange = length => [...Array(length).keys()].map(t => t.toString());
-
-// make an array of the numbers 0 - 59 for the minutes and seconds
-const secondsAndMinutesRange = createTimeRange(60);
-// make an array of the numbers 0 - 9 for the hours
-const hoursRange = createTimeRange(10);
-// make an array of the numbers 0 - 99 for the milliseconds
-const millisecondsRange = createTimeRange(100);
-
 
 class App extends Component {
 
@@ -216,53 +194,60 @@ class App extends Component {
 
     return (
       <div className="App">
-        <header className="App-header">
-          <div className="select-area">
-            <SelectElement
-                ariaLabel="select event"
-                handleChange={handleChangeEvent}
-                optionsValue={eventOptions}
-                placeholder="select event"
-                value={event}
-            />
-            <SelectElement
-              ariaLabel="select gender"
-              handleChange={handleChangeGender}
-              optionsValue={genderOptions}
-              placeholder="select gender"
-              value={gender}
-            />
-            <button className="compare-button" disabled={!gender || !event} onClick={compareTimes}>compare</button>
-          </div>
-          <Info isShown={Object.entries(filteredOptions).length <= 0}/>
-          <TimePicker
-            eventCategory={event ? checkLength(event) : 'short'}
-            isShown={Object.entries(filteredOptions).length > 0}
-            onChange={handleChangeTime}
-            optionGroups={filteredOptions}
-            valueGroups={valueGroups}
-          />
-        </header>
         <main>
-         <svg className="world-map" viewBox="0 0 1000 400">
-           {countries}
-         </svg>
-        </main>
-        { slowerCountries.length <= 0 && <div className="date-stamp">{resultData['generated_at']}</div> }
-        { slowerCountries.length > 0 && 
-          <Fragment>
-            <div className="faster-than">{
-            `you're faster than ${slowerCountries.length > 1 ? 'these' : 'this'}
-            ${slowerCountries.length}
-            ${slowerCountries.length > 1 ? 'countries' : 'country'} `
-            }</div>
-            <div className="countries-list">
-              {slowerCountries
-                  // sorted in the python code, so can just map here to show descending times
-                  .map(country => <Country key={country[0]} country={country} />)}
+          <div className={classnames("App-header", slowerCountries.length > 0 ? `hide` : `display`)}>
+            <div className="select-area">
+              <SelectElement
+                  ariaLabel="select event"
+                  handleChange={handleChangeEvent}
+                  optionsValue={eventOptions}
+                  placeholder="select event"
+                  value={event}
+              />
+              <SelectElement
+                ariaLabel="select gender"
+                handleChange={handleChangeGender}
+                optionsValue={genderOptions}
+                placeholder="select gender"
+                value={gender}
+              />
+              <button className="compare-button" disabled={!gender || !event} onClick={compareTimes}>compare</button>
             </div>
-          </Fragment>
-        }
+            <Info isShown={Object.entries(filteredOptions).length <= 0}/>
+            <TimePicker
+              eventCategory={event ? checkLength(event) : 'short'}
+              isShown={Object.entries(filteredOptions).length > 0}
+              onChange={handleChangeTime}
+              optionGroups={filteredOptions}
+              valueGroups={valueGroups}
+            />
+          </div>
+          <div className={classnames("results", slowerCountries.length > 0 ? `display` : `hide`)}>
+            <div className="world-map">
+              <svg viewBox={window.innerWidth > 500 ? "0 0 1000 435" : "0 0 800 535"} overflow="auto">
+                {countries}
+              </svg>
+            </div>
+            { slowerCountries.length <= 0 && <div className="date-stamp">{resultData['generated_at']}</div> }
+            { slowerCountries.length > 0 && 
+             <div className="info">
+               <div className="faster-than">{
+                 `you're faster than ${slowerCountries.length > 1 ? 'these' : 'this'}
+                 ${slowerCountries.length}
+                 ${slowerCountries.length > 1 ? 'countries' : 'country'}`
+               }</div>
+               <div className="scroll-note">
+                (scroll to the side if you can't see the whole map)
+               </div>
+               <div className="countries-list">
+                 {slowerCountries
+                     // sorted in the python code, so can just map here to show descending times
+                     .map(country => <Country key={country[0]} country={country} />)}
+               </div>
+             </div>
+            }
+          </div>
+        </main>
       </div>
     )
   }

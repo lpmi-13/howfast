@@ -12,15 +12,22 @@ path.selected {
   fill: black;
 }
 
+main {
+  overflow: hidden;
+}
+
 .App-header {
+  position: fixed;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  width: 100vw;
+  transition: opacity 1.5s ease;
 
-  @include respond-to("small") {
-    margin-bottom: 1.25em;
-    flex-direction: row;
+  &.hide {
+    opacity: 0;
   }
 }
 
@@ -29,26 +36,33 @@ path.selected {
 }
 
 main {
-  margin: 0;
-  /* min-height: 85vh; */
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: row;
 }
 
 .world-map {
-  margin: 0 10%;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  overflow-x: auto;
+
+  svg {
+    min-width: 55em;
+
+    @include respond-to("small") {
+      min-width: 90em;
+    }
+  }
 }
 
-.faster-than, .date-stamp {
+.faster-than, .date-stamp, .scroll-note {
   color: white;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin: 0.5em 0 0;
+  margin: 0.5em;
+  text-align: center;
 }
 
 .select-area {
@@ -56,7 +70,6 @@ main {
   flex-direction: column;
   align-items: center;
   width: 85%;
-  margin-top: 1em;
 
     .select-box {
       width: 85%;
@@ -66,7 +79,8 @@ main {
   @include respond-to("small") {
     justify-content: space-evenly;
 
-    width: 35%;
+    width: 50%;
+    font-size: 2.5rem;
 
     .select-box {
       width: 65%;
@@ -81,17 +95,18 @@ main {
   font-size: 2rem;
 
   @include respond-to("small") {
-    margin: 0 0.25em;
+    margin: 0.5em 0.25em;
+    font-size: 3rem;
+    width: 5em;
+    height: 1.5em;
   }
 }
 
 .picker-box {
   width: 95%;
-  margin-bottom: 0.25em;
 
   @include respond-to("small") {
-    width: 20em;
-    margin-bottom: 2em;
+    width: 50%;
   }
 
 }
@@ -106,7 +121,8 @@ main {
   margin: 1em 3em;
 
   @include respond-to("small") {
-    max-width: 35%;
+    max-width: 45%;
+    font-size: 2rem;
   }
 }
 
@@ -114,7 +130,7 @@ main {
   color: white;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
   font-size: 0.65rem;
 
   @include respond-to("small") {
@@ -122,13 +138,14 @@ main {
   }
 }
 
-.picker-scroller, .picker-container, .picker-inner {
-  perspective: 200px;
-}
-
 .picker-item {
   background: white;
-  border: 2px solid black;
+  border: 3px solid black;
+}
+
+.picker-item-selected {
+  font-weight: bold;
+  font-size: 1.5rem;
 }
 
 .countries-list {
@@ -139,6 +156,7 @@ main {
   justify-content: center;
   align-items: center;
   margin-top: 2em;
+  width: 100vw;
 
   .country {
     margin: 0.5em;
@@ -151,4 +169,23 @@ main {
       margin: 0.25em;
     }
   }
+}
+
+
+.results {
+  transition: margin-left 1.5s ease;
+  &.display {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    margin-left: inherit;
+  }
+  &.hide {
+    margin-left: 100em;
+  }
+}
+
+.info {
+  margin-top: 1em;
 }
