@@ -24,7 +24,7 @@ main {
   align-items: center;
   height: 100vh;
   width: 100vw;
-  transition: opacity 1.5s ease;
+  transition: opacity 0.5s ease-in-out;
 
   &.hide {
     opacity: 0;
@@ -48,7 +48,7 @@ main {
   overflow-x: auto;
 
   svg {
-    min-width: 55em;
+    min-width: 70em;
 
     @include respond-to("small") {
       min-width: 90em;
@@ -89,7 +89,7 @@ main {
   }
 }
 
-.compare-button {
+.compare-button, .back-button {
   border-radius: 0.25em;
   margin: 0.25em 0;
   font-size: 2rem;
@@ -173,7 +173,7 @@ main {
 
 
 .results {
-  transition: margin-left 1.5s ease;
+  transition: margin-left 0.5s ease-in-out;
   &.display {
     position: relative;
     z-index: 2;

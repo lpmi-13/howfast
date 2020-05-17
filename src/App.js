@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import './App.scss';
 import worlddata from './world';
@@ -50,6 +50,10 @@ class App extends Component {
       millisecondsOptions: millisecondsRange,
     },
     filteredOptions: {},
+  }
+
+  backToChooseTimes = () => {
+    this.setState({ slowerCountries : [] });
   }
 
   compareTimes = () => {
@@ -178,6 +182,7 @@ class App extends Component {
              });
 
     const {
+      backToChooseTimes,
       checkLength,
       compareTimes,
       handleChangeEvent,
@@ -224,13 +229,14 @@ class App extends Component {
           </div>
           <div className={classnames("results", slowerCountries.length > 0 ? `display` : `hide`)}>
             <div className="world-map">
-              <svg viewBox={window.innerWidth > 500 ? "0 0 1000 435" : "0 0 800 535"} overflow="auto">
+              <svg viewBox={window.innerWidth > 500 ? "0 0 1000 435" : "-500 0 1500 435"} overflow="auto">
                 {countries}
               </svg>
             </div>
             { slowerCountries.length <= 0 && <div className="date-stamp">{resultData['generated_at']}</div> }
             { slowerCountries.length > 0 && 
              <div className="info">
+               <button className="back-button" onClick={backToChooseTimes}>back</button>
                <div className="faster-than">{
                  `you're faster than ${slowerCountries.length > 1 ? 'these' : 'this'}
                  ${slowerCountries.length}
