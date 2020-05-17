@@ -167,5 +167,8 @@ date_for_display = "Times current as of {}".format(
 
 TIME_DICT['generated_at'] = date_for_display
 
+if not os.path.exists(OUTPUT_PATH):
+    os.mkdir(OUTPUT_PATH)
+
 with open(os.path.join(OUTPUT_PATH, OUTPUT_FILE), 'w') as output_file:
     output_file.write(json.dumps(TIME_DICT))
