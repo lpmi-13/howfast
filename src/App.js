@@ -146,12 +146,6 @@ class App extends Component {
     this.setState({
       gender: value,
       slowerCountries: [],
-      valueGroups: {
-        hours: '0',
-        minutes: '0',
-        seconds: '0',
-        milliseconds: '0',
-      }
     });
   }
 
