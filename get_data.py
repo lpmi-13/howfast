@@ -101,10 +101,6 @@ def convert_times_to_milliseconds(time):
             hours) + minutes_to_millis(minutes) + seconds_to_millis(seconds)
 
 
-def matching(link, event):
-    return link.get('title') == event
-
-
 def get_times_for_country(country):
     # grab the page data and parse it
     r = requests.get(BASE_URL + country['url'])

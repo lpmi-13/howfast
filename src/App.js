@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowCircleLeft, faArrowCircleUp } from '@fortawesome/free-solid-svg-icons';
 import './App.scss';
 import worlddata from './world';
 import resultData from './data/results';
@@ -54,6 +56,10 @@ class App extends Component {
 
   backToChooseTimes = () => {
     this.setState({ slowerCountries : [] });
+  }
+
+  returnToTop = () => {
+    window.scroll(0,0);
   }
 
   compareTimes = () => {
@@ -182,6 +188,7 @@ class App extends Component {
       handleChangeEvent,
       handleChangeGender,
       handleChangeTime,
+      returnToTop,
       state: {
         event,
         gender,
@@ -230,7 +237,6 @@ class App extends Component {
             { slowerCountries.length <= 0 && <div className="date-stamp">{resultData['generated_at']}</div> }
             { slowerCountries.length > 0 && 
              <div className="info">
-               <button className="back-button" onClick={backToChooseTimes}>back</button>
                <div className="faster-than">{
                  `you're faster than ${slowerCountries.length > 1 ? 'these' : 'this'}
                  ${slowerCountries.length}
@@ -243,6 +249,11 @@ class App extends Component {
                  {slowerCountries
                      // sorted in the python code, so can just map here to show descending times
                      .map(country => <Country key={country[0]} country={country} />)}
+               </div>
+
+               <div className="arrows">
+                 <FontAwesomeIcon icon={faArrowCircleLeft} onClick={backToChooseTimes} />
+                 <FontAwesomeIcon icon={faArrowCircleUp} onClick={returnToTop} />
                </div>
              </div>
             }
