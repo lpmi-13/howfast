@@ -6,21 +6,27 @@ A simple React app that shows users how many countries' national records in trac
 
 e.g., entering a time of 15:40 for the 5,000 meters returns "you are faster than the runners of 20 countries..." and lists them.
 
-## Local developlment
-
-```
-$ npm install
-$ npm start
-```
 
 ## Grabbing the data (do this prior to local dev, or there won't be anything to compare to)
 
 ```
-$ python grab_data.py
+$ npm install
+$ npm run getData
 ```
 
+## Local developlment
+
+```
+$ npm start
+```
 ...updates the datetime in the json array for display on the site
 
+
+## Building for deployment (for example, on Netlify)
+
+```
+$ npm run build
+```
 
 ### the old angularJS app
 

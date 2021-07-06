@@ -6,6 +6,7 @@ import os
 import re
 import requests
 
+INPUT_FILE_NAME = 'urls.txt'
 BASE_URL = 'https://en.wikipedia.org'
 OUTPUT_PATH = 'src/data'
 OUTPUT_FILE = 'results.json'
@@ -26,7 +27,7 @@ TIME_DICT = {'events': {}, 'generated_at': ''}
 
 
 # first, read in the file of national record URLs from wikipedia
-with open('urls.txt', 'r') as input_file:
+with open(INPUT_FILE_NAME, 'r') as input_file:
     data = input_file.readlines()
 
 cleaned_data = [json.loads(line) for line in data]
@@ -108,7 +109,7 @@ def get_times_for_country(country):
 
     nation = country['country']
 
-    print(nation)
+    print(f'processing times for {nation}...')
 
     for event in EVENT_LIST:
 
@@ -119,14 +120,13 @@ def get_times_for_country(country):
 
         try:
             mens_outdoor_time = get_time_from_html(filtered_links[0])
-            print(mens_outdoor_time)
 
             if mens_outdoor_time is not None:
                 TIME_DICT['events'][event]['men'].append(
                     [nation, convert_times_to_milliseconds(mens_outdoor_time)])
 
         except IndexError:
-            print('no mens outdoor data')
+            print(f'no mens outdoor data for {nation}')
 
         try:
             womens_outdoor_time = get_time_from_html(filtered_links[1])
@@ -136,7 +136,7 @@ def get_times_for_country(country):
                 TIME_DICT['events'][event]['women'].append(
                     [nation, convert_times_to_milliseconds(womens_outdoor_time)])
         except IndexError:
-            print('no womens outdoor data')
+            print(f'no womens outdoor data for {nation}')
 
 
 # add these to the dicts so we dont get key errors

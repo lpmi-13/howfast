@@ -21,6 +21,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "python get_data.py && react-scripts build",
+    "getData": "python get_data.py",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

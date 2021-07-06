@@ -28,7 +28,7 @@
 {"country": "Brazil" , "url": "/wiki/List_of_Brazilian_records_in_athletics"}
 {"country": "Brunei" , "url": "/wiki/List_of_Bruneian_records_in_athletics"}
 {"country": "Bulgaria" , "url": "/wiki/List_of_Bulgarian_records_in_athletics"}
-{"country": "Burkia Faso" , "url": "/wiki/List_of_Burkinab%C3%A9_records_in_athletics"}
+{"country": "Burkina Faso" , "url": "/wiki/List_of_Burkinab%C3%A9_records_in_athletics"}
 {"country": "Burundi" , "url": "/wiki/List_of_Burundian_records_in_athletics"}
 {"country": "Cambodia" , "url": "/wiki/List_of_Cambodian_records_in_athletics"}
 {"country": "Cameroon" , "url": "/wiki/List_of_Cameroonian_records_in_athletics"}
@@ -156,7 +156,7 @@
 {"country": "Switzerland" , "url": "/wiki/List_of_Swiss_records_in_athletics"}
 {"country": "Syria" , "url": "/wiki/List_of_Syrian_records_in_athletics"}
 {"country": "Tajikistan" , "url": "/wiki/List_of_Tajikistani_records_in_athletics"}
-{"country": "United Republic of Tanzania" , "url": "/wiki/List_of_Tanzanian_records_in_athletics"}
+{"country": "Tanzania" , "url": "/wiki/List_of_Tanzanian_records_in_athletics"}
 {"country": "Thailand" , "url": "/wiki/List_of_Thai_records_in_athletics"}
 {"country": "Togo" , "url": "/wiki/List_of_Togolese_records_in_athletics"}
 {"country": "Tonga", "url": "/wiki/List_of_Tongan_records_in_athletics"}
