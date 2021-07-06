@@ -130,7 +130,6 @@ def get_times_for_country(country):
 
         try:
             womens_outdoor_time = get_time_from_html(filtered_links[1])
-            print(womens_outdoor_time)
 
             if womens_outdoor_time is not None:
                 TIME_DICT['events'][event]['women'].append(
