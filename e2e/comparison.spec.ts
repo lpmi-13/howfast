@@ -9,6 +9,40 @@ test('loads presentation from a render-blocking stylesheet', async ({ page }) =>
   await expect(page.locator('.hero')).toHaveCSS('background-color', 'rgb(40, 44, 52)');
 });
 
+test('exposes complete social preview metadata', async ({ page }) => {
+  await page.goto('/');
+
+  const productionUrl = 'https://howfastami.netlify.app/';
+  const previewUrl = `${productionUrl}social-preview.png`;
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', productionUrl);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', previewUrl);
+  await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute(
+    'content',
+    'image/png',
+  );
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /.+/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    'content',
+    'summary_large_image',
+  );
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', previewUrl);
+  await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute('content', /.+/);
+
+  const dimensions = await page.evaluate(
+    () =>
+      new Promise<{ width: number; height: number }>((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+        image.onerror = () => reject(new Error('Social preview image failed to load.'));
+        image.src = '/social-preview.png';
+      }),
+  );
+  expect(dimensions).toEqual({ width: 1200, height: 630 });
+});
+
 test('compares a sprint time using only bundled data', async ({ page }, testInfo) => {
   const consoleErrors: string[] = [];
   page.on('console', (message) => {
