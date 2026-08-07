@@ -1,43 +1,44 @@
 {
-  "name": "HowFastAmI",
-  "version": "0.2.0",
-  "private": false,
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.28",
-    "@fortawesome/free-solid-svg-icons": "^5.13.0",
-    "@fortawesome/react-fontawesome": "^0.1.9",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "classnames": "^2.2.6",
-    "d3-geo": "^1.11.9",
-    "node-sass": "^6.0.1",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "react-mobile-picker-scroll": "^0.2.14",
-    "react-scripts": "^4.0.3",
-    "react-select": "^3.1.0"
-  },
+  "name": "howfastami",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A static app for comparing running times with national athletics records.",
+  "license": "MIT",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "python get_data.py && react-scripts build",
-    "getData": "python get_data.py",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "predev": "npm run data:ensure",
+    "dev": "vite",
+    "data": "node scripts/build-data.ts",
+    "data:ensure": "node scripts/ensure-data.ts",
+    "build": "npm run data && npm run build:app",
+    "build:app": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "check": "npm run data:ensure && npm run lint && npm run test && npm run build:app && npm run format:check"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "engines": {
+    "node": ">=24.0.0 <25",
+    "npm": ">=11.6.1 <13"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "packageManager": "npm@11.6.1",
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "d3-geo": "^3.1.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@biomejs/biome": "^2.5.7",
+    "@playwright/test": "^1.62.1",
+    "@types/d3-geo": "^3.1.1",
+    "@types/node": "^26.2.0",
+    "cheerio": "^1.2.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
   }
 }

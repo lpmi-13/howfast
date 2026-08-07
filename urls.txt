@@ -4,8 +4,8 @@
 {"country": "American Samoa" , "url": "/wiki/List_of_American_Samoan_records_in_athletics"}
 {"country": "Andorra" , "url": "/wiki/List_of_Andorran_records_in_athletics"}
 {"country": "Angola" , "url": "/wiki/List_of_Angolan_records_in_athletics"}
-{"country": "Angullia" , "url": "/wiki/List_of_Anguillian_records_in_athletics"}
-{"country": "Antigua and Barbados" , "url": "/wiki/List_of_Antiguan_and_Barbudan_records_in_athletics"}
+{"country": "Anguilla" , "url": "/wiki/List_of_Anguillian_records_in_athletics"}
+{"country": "Antigua and Barbuda" , "url": "/wiki/List_of_Antiguan_and_Barbudan_records_in_athletics"}
 {"country": "Argentina" , "url": "/wiki/List_of_Argentine_records_in_athletics"}
 {"country": "Armenia" , "url": "/wiki/List_of_Armenian_records_in_athletics"}
 {"country": "Aruba" , "url": "/wiki/List_of_Aruban_records_in_athletics"}
@@ -171,7 +171,7 @@
 {"country": "United States of America", "url": "/wiki/List_of_United_States_records_in_track_and_field"}
 {"country": "Uruguay" , "url": "/wiki/List_of_Uruguayan_records_in_athletics"}
 {"country": "Uzbekistan" , "url": "/wiki/List_of_Uzbekistani_records_in_athletics"}
-{"country": "Vanuata" , "url": "/wiki/List_of_Vanuatuan_records_in_athletics"}
+{"country": "Vanuatu" , "url": "/wiki/List_of_Vanuatuan_records_in_athletics"}
 {"country": "Venezuela" , "url": "/wiki/List_of_Venezuelan_records_in_athletics"}
 {"country": "Vietnam" , "url": "/wiki/List_of_Vietnamese_records_in_athletics"}
 {"country": "Yemen" , "url": "/wiki/List_of_Yemeni_records_in_athletics"}

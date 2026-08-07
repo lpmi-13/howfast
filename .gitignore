@@ -1,4 +1,5 @@
 node_modules
-build
-src/data/*
-**/*.pyc
+dist
+playwright-report
+test-results
+/src/data/results.json

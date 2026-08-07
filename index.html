@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Compare your running time with national athletics records from around the world."
+    />
+    <meta name="application-name" content="How Fast Am I?" />
+    <meta name="theme-color" content="#16243d" />
+    <link rel="canonical" href="https://howfastami.netlify.app/" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="stylesheet" href="/src/styles.css" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="How Fast Am I?" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content="https://howfastami.netlify.app/" />
+    <meta property="og:title" content="How Fast Am I?" />
+    <meta
+      property="og:description"
+      content="See how your running time compares with national records around the world."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="How Fast Am I?" />
+    <meta
+      name="twitter:description"
+      content="See how your running time compares with national records around the world."
+    />
+
+    <title>How Fast Am I? — Compare your running time</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#comparison">Skip to comparison</a>
+
+    <main>
+      <section class="hero" id="comparison" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 class="visually-hidden" id="hero-title">How Fast Am I?</h1>
+
+          <form class="comparison-form" id="comparison-form">
+            <div class="form-grid">
+              <label>
+                <span class="visually-hidden">Event</span>
+                <select id="event-select" name="event" required>
+                  <option value="">select event</option>
+                </select>
+              </label>
+              <label>
+                <span class="visually-hidden">Category</span>
+                <select id="gender-select" name="gender" required>
+                  <option value="">select category</option>
+                  <option value="women">women</option>
+                  <option value="men">men</option>
+                </select>
+              </label>
+            </div>
+
+            <fieldset class="time-entry" id="time-entry" disabled>
+              <legend class="visually-hidden">Your time</legend>
+              <div class="time-fields" id="time-fields"></div>
+              <p class="time-preview" id="time-preview" aria-live="polite">
+                Choose an event first.
+              </p>
+            </fieldset>
+
+            <p class="form-error" id="form-error" aria-live="polite"></p>
+            <button class="primary-button" id="compare-button" type="submit" disabled>
+              compare
+            </button>
+          </form>
+
+          <p class="landing-note">
+            Select an event, category, and time to compare yourself with senior national records.
+          </p>
+          <a class="landing-about" href="#about">about the data</a>
+          <span class="visually-hidden" id="source-count">—</span>
+        </div>
+      </section>
+
+      <section class="results" id="results" aria-labelledby="results-title" hidden>
+        <div class="map-card">
+          <svg
+            id="world-map"
+            viewBox="0 0 1000 500"
+            role="img"
+            aria-labelledby="map-title map-description"
+          >
+            <title id="map-title">World map of countries whose national record your time beats</title>
+            <desc id="map-description">Highlighted countries are listed below the map.</desc>
+          </svg>
+        </div>
+
+        <header class="results-header">
+          <h2 id="results-title">Your comparison result</h2>
+          <p id="results-detail"></p>
+        </header>
+
+        <div class="country-panel">
+          <ol class="country-list" id="country-list"></ol>
+        </div>
+
+        <nav class="results-actions" aria-label="Result controls">
+          <button class="result-icon-button result-back-button" id="edit-time" type="button">
+            <span class="result-button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M10 6 4 12l6 6M4 12h16" />
+              </svg>
+            </span>
+            <span>Change time</span>
+          </button>
+          <button
+            class="result-icon-button result-top-button"
+            id="return-top"
+            type="button"
+            disabled
+          >
+            <span class="result-button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="m6 10 6-6 6 6M12 4v16" />
+              </svg>
+            </span>
+            <span class="visually-hidden">Return to the top of the results</span>
+          </button>
+        </nav>
+      </section>
+
+      <section class="about" id="about" aria-labelledby="about-title">
+        <p class="eyebrow eyebrow-dark"><span></span> About the data</p>
+        <h2 id="about-title">A static snapshot, built from Wikipedia.</h2>
+        <div class="about-grid">
+          <p>
+            The comparison uses outdoor national records published on English Wikipedia. Each
+            result links back to its source page so you can inspect the underlying record.
+          </p>
+          <p>
+            Times are refreshed during a dedicated TypeScript data build, then shipped with the
+            site. Your browser makes no data requests and your entered time never leaves the page.
+          </p>
+        </div>
+        <p class="data-stamp" id="data-stamp"></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span class="brand">How Fast Am I?</span>
+      <p>
+        Record data comes from
+        <a href="https://en.wikipedia.org" rel="external">English Wikipedia</a> under CC BY-SA.
+      </p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
