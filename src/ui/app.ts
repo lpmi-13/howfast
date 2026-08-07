@@ -232,10 +232,11 @@ export class HowFastApp {
     const selectValue = (value: number, behavior: ScrollBehavior): void => {
       const nextValue = Math.max(0, Math.min(field.max, value));
       const rowHeight = options[0]?.offsetHeight || 48;
+      const resolvedBehavior = this.getScrollBehavior(behavior);
       preserveSelectedValue = true;
       updateValue(nextValue);
 
-      if (behavior === 'auto') {
+      if (resolvedBehavior === 'auto') {
         wheel.style.scrollSnapType = 'none';
         wheel.scrollTop = nextValue * rowHeight;
         updatePerspective();
@@ -243,7 +244,7 @@ export class HowFastApp {
       }
 
       wheel.style.removeProperty('scroll-snap-type');
-      wheel.scrollTo({ top: nextValue * rowHeight, behavior });
+      wheel.scrollTo({ top: nextValue * rowHeight, behavior: resolvedBehavior });
     };
 
     const beginDirectManipulation = (): void => {
@@ -352,7 +353,8 @@ export class HowFastApp {
     this.highlightCountries(slowerRecords);
     this.elements.results.hidden = false;
     this.document.body.classList.add('showing-results');
-    this.document.defaultView?.scrollTo({ top: 0, behavior: 'smooth' });
+    this.elements.resultsTitle.focus({ preventScroll: true });
+    this.document.defaultView?.scrollTo({ top: 0, behavior: this.getScrollBehavior('smooth') });
     this.updateReturnTopButton();
   }
 
@@ -434,7 +436,15 @@ export class HowFastApp {
   }
 
   private returnToTop(): void {
-    this.document.defaultView?.scrollTo({ top: 0, behavior: 'smooth' });
+    this.elements.resultsTitle.focus({ preventScroll: true });
+    this.document.defaultView?.scrollTo({ top: 0, behavior: this.getScrollBehavior('smooth') });
+  }
+
+  private getScrollBehavior(behavior: ScrollBehavior): ScrollBehavior {
+    const reducedMotion = this.document.defaultView?.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    return behavior === 'smooth' && reducedMotion ? 'auto' : behavior;
   }
 
   private updateReturnTopButton(): void {

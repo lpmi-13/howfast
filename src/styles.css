@@ -183,10 +183,16 @@ select:focus,
   box-shadow: 0 0 0 4px rgba(117, 189, 184, 0.22);
 }
 
+select:focus-visible,
+.time-field:has(.time-wheel:focus-visible) {
+  outline: 3px solid var(--mint);
+  outline-offset: 3px;
+}
+
 .time-entry {
   width: min(100%, 28rem);
   margin: 1.5rem 0 0;
-  order: 3;
+  order: 2;
   padding: 0;
   border: 0;
   animation: time-entry-in 240ms ease-out both;
@@ -359,7 +365,7 @@ select:focus,
   min-width: 8.5rem;
   min-height: 3.3rem;
   margin-top: 1.25rem;
-  order: 2;
+  order: 3;
   padding: 0.2rem 1.15rem;
   border: 2px solid #171a1f;
   border-radius: 0.45rem;
@@ -486,6 +492,11 @@ p {
   animation: results-in 380ms ease-out both;
 }
 
+.results:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+}
+
 @keyframes results-in {
   from {
     opacity: 0;
@@ -502,7 +513,7 @@ p {
   text-align: center;
 }
 
-.results h2 {
+.results h1 {
   margin: 0;
   font-size: clamp(2rem, 6vw, 3rem);
   font-weight: 470;
@@ -521,6 +532,7 @@ p {
 }
 
 .map-card {
+  order: -1;
   display: flex;
   justify-content: center;
   width: 100%;
@@ -812,5 +824,12 @@ p {
   *::after {
     scroll-behavior: auto;
     transition-duration: 0.01ms;
+  }
+
+  .hero-copy,
+  .time-entry,
+  .results {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
   }
 }

@@ -32,9 +32,9 @@
     <title>How Fast Am I? — Compare your running time</title>
   </head>
   <body>
-    <a class="skip-link" href="#comparison">Skip to comparison</a>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    <main>
+    <main id="main-content" tabindex="-1">
       <section class="hero" id="comparison" aria-labelledby="hero-title">
         <div class="hero-copy">
           <h1 class="visually-hidden" id="hero-title">How Fast Am I?</h1>
@@ -80,26 +80,10 @@
       </section>
 
       <section class="results" id="results" aria-labelledby="results-title" hidden>
-        <div class="map-card">
-          <svg
-            id="world-map"
-            viewBox="0 0 1000 500"
-            role="img"
-            aria-labelledby="map-title map-description"
-          >
-            <title id="map-title">World map of countries whose national record your time beats</title>
-            <desc id="map-description">Highlighted countries are listed below the map.</desc>
-          </svg>
-        </div>
-
         <header class="results-header">
-          <h2 id="results-title">Your comparison result</h2>
+          <h1 id="results-title" tabindex="-1">Your comparison result</h1>
           <p id="results-detail"></p>
         </header>
-
-        <div class="country-panel">
-          <ol class="country-list" id="country-list"></ol>
-        </div>
 
         <nav class="results-actions" aria-label="Result controls">
           <button class="result-icon-button result-back-button" id="edit-time" type="button">
@@ -124,6 +108,22 @@
             <span class="visually-hidden">Return to the top of the results</span>
           </button>
         </nav>
+
+        <div class="map-card">
+          <svg
+            id="world-map"
+            viewBox="0 0 1000 500"
+            role="img"
+            aria-labelledby="map-title map-description"
+          >
+            <title id="map-title">World map of countries whose national record your time beats</title>
+            <desc id="map-description">Highlighted countries are listed below the map.</desc>
+          </svg>
+        </div>
+
+        <div class="country-panel">
+          <ol class="country-list" id="country-list"></ol>
+        </div>
       </section>
 
       <section class="about" id="about" aria-labelledby="about-title">

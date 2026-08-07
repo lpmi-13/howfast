@@ -25,14 +25,33 @@ test('compares a sprint time using only bundled data', async ({ page }, testInfo
   await expect(secondsWheel).toBeVisible();
   for (let second = 0; second < 12; second += 1) await secondsWheel.press('ArrowDown');
   await expect(secondsWheel).toHaveAttribute('aria-valuenow', '12');
-  await page.getByRole('button', { name: 'compare', exact: true }).click();
+  const compareButton = page.getByRole('button', { name: 'compare', exact: true });
+  const timeEntryBox = await page.locator('#time-entry').boundingBox();
+  const compareButtonBox = await compareButton.boundingBox();
+  expect(compareButtonBox?.y).toBeGreaterThanOrEqual(
+    (timeEntryBox?.y ?? 0) + (timeEntryBox?.height ?? 0),
+  );
+  await compareButton.click();
 
   await expect(page.locator('#results')).toBeVisible();
   await expect(page.getByLabel('Event')).not.toBeVisible();
-  await expect(page.locator('#results-title')).toContainText(/faster than|does not beat/);
+  const resultsTitle = page.getByRole('heading', { level: 1 });
+  await expect(resultsTitle).toContainText(/faster than|does not beat/);
+  await expect(resultsTitle).toBeFocused();
   await expect(page.locator('#results-detail')).toContainText('12.00');
   const changeTimeButton = page.getByRole('button', { name: 'Change time' });
   await expect(changeTimeButton).toBeInViewport();
+  expect(
+    await page.evaluate(() => {
+      const button = document.querySelector('#edit-time');
+      const list = document.querySelector('#country-list');
+      return Boolean(
+        button &&
+          list &&
+          (button.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+      );
+    }),
+  ).toBe(true);
 
   if (testInfo.project.name === 'mobile-chrome') {
     const mapOverflows = await page
@@ -55,6 +74,7 @@ test('compares a sprint time using only bundled data', async ({ page }, testInfo
   await returnToTopButton.click();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await expect(returnToTopButton).not.toBeVisible();
+  await expect(resultsTitle).toBeFocused();
 
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await page.getByRole('button', { name: 'Change time' }).click();
@@ -116,4 +136,41 @@ test('has no serious accessibility violations or horizontal overflow', async ({ 
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
   );
   expect(hasHorizontalOverflow).toBe(false);
+
+  await expect(page.locator('.skip-link')).toHaveAttribute('href', '#main-content');
+  await expect(page.locator('#main-content')).toHaveAttribute('tabindex', '-1');
+
+  const eventSelect = page.getByLabel('Event');
+  await eventSelect.focus();
+  await expect(eventSelect).toHaveCSS('outline-style', 'solid');
+  await eventSelect.selectOption('100 metres');
+  await page.getByLabel('Category').selectOption('women');
+  const secondsWheel = page.getByRole('spinbutton', { name: 'Seconds' });
+  await secondsWheel.focus();
+  await expect(secondsWheel.locator('..')).toHaveCSS('outline-style', 'solid');
+
+  for (let second = 0; second < 12; second += 1) await secondsWheel.press('ArrowDown');
+  await page.getByRole('button', { name: 'compare', exact: true }).click();
+  await page.evaluate(() =>
+    Promise.all(document.getAnimations().map((animation) => animation.finished)),
+  );
+  const resultsAudit = await new AxeBuilder({ page }).analyze();
+  expect(resultsAudit.violations).toEqual([]);
+});
+
+test('honours reduced-motion preferences', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+
+  const animationDuration = await page
+    .locator('.hero-copy')
+    .evaluate((element) => Number.parseFloat(getComputedStyle(element).animationDuration) * 1000);
+  expect(animationDuration).toBeLessThanOrEqual(1);
+
+  await page.getByLabel('Event').selectOption('100 metres');
+  await page.getByLabel('Category').selectOption('women');
+  const pickerAnimationDuration = await page
+    .locator('#time-entry')
+    .evaluate((element) => Number.parseFloat(getComputedStyle(element).animationDuration) * 1000);
+  expect(pickerAnimationDuration).toBeLessThanOrEqual(1);
 });
