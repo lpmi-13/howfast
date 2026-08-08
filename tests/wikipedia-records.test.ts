@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
+  buildRecordsData,
+  fetchWikipediaPage,
   parseRecordTime,
   parseSourcesFile,
   parseWikipediaRecords,
@@ -72,7 +74,54 @@ describe('Wikipedia record parsing', () => {
     expect(records.women?.Marathon?.milliseconds).toBe(7_796_000);
     expect(records.women?.['200 metres']).toBeUndefined();
     expect(records.women?.['100 metres']?.sourceUrl).toBe(
-      'https://en.wikipedia.org/wiki/List_of_Testland_records_in_athletics',
+      'https://en.wikipedia.org/wiki/List_of_Testland_records_in_athletics#Outdoor',
     );
+  });
+
+  it('uses the outdoor heading id for links to record sources', () => {
+    const records = parseWikipediaRecords(
+      fixture.replace('<h2>Outdoor</h2>', '<h2 id="Outdoor_records">Outdoor</h2>'),
+      source,
+    );
+
+    expect(records.men?.['100 metres']?.sourceUrl).toBe(
+      'https://en.wikipedia.org/wiki/List_of_Testland_records_in_athletics#Outdoor_records',
+    );
+  });
+});
+
+describe('Wikipedia fetching', () => {
+  it('retries rate-limited requests and honors an immediate Retry-After', async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('', { status: 429, headers: { 'Retry-After': '0' } }))
+      .mockResolvedValueOnce(new Response('<h2>Outdoor</h2>'));
+
+    await expect(fetchWikipediaPage(source, fetcher)).resolves.toBe('<h2>Outdoor</h2>');
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it('fails the data build when a source page cannot be loaded', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response('', { status: 404 }));
+
+    await expect(buildRecordsData([source], fetcher)).rejects.toThrow(
+      'Failed to load records for Testland: Wikipedia returned HTTP 404',
+    );
+    expect(fetcher).toHaveBeenCalledOnce();
+  });
+
+  it('allows a successfully loaded page to contain no supported outdoor records', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(`
+        <h2>Indoor</h2>
+        <p>This country only publishes indoor records.</p>
+      `),
+    );
+
+    const data = await buildRecordsData([source], fetcher);
+
+    expect(data.sourcePageCount).toBe(1);
+    expect(data.events['800 metres']).toEqual({ women: [], men: [] });
+    expect(fetcher).toHaveBeenCalledOnce();
   });
 });
