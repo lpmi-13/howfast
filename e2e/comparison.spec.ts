@@ -69,6 +69,12 @@ test('compares a sprint time using only bundled data', async ({ page }, testInfo
 
   await expect(page.locator('#results')).toBeVisible();
   await expect(page.getByLabel('Event')).not.toBeVisible();
+  await expect(page.locator('.map-country:not(.map-country-faster)').first()).toHaveCSS(
+    'fill',
+    'rgb(48, 50, 56)',
+  );
+  await expect(page.locator('.map-country-faster').first()).toHaveCSS('fill', 'rgb(42, 166, 165)');
+  await expect(page.locator('.map-country-faster').first()).toHaveCSS('stroke', 'rgb(117, 80, 84)');
   const resultsTitle = page.getByRole('heading', { level: 1 });
   await expect(resultsTitle).toContainText(/faster than|does not beat/);
   await expect(resultsTitle).toBeFocused();
