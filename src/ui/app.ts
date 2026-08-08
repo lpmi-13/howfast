@@ -38,6 +38,8 @@ interface AppElements {
 
 const records = recordsJson as unknown as RecordsData;
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+const WORLD_MAP_VIEW_BOX = { x: 0, y: 0, width: 1000, height: 500 } as const;
+const MAP_ZOOM_DURATION_MS = 900;
 const MAP_NAME_ALIASES: Record<string, string> = {
   'Antigua and Barbuda': 'Antigua and Barb.',
   'Central African Republic': 'Central African Rep.',
@@ -54,6 +56,7 @@ const MAP_NAME_ALIASES: Record<string, string> = {
 export class HowFastApp {
   private readonly elements: AppElements;
   private readonly mapPaths = new Map<string, SVGPathElement>();
+  private mapAnimationFrame = 0;
 
   constructor(private readonly document: Document = globalThis.document) {
     this.elements = this.getElements();
@@ -353,6 +356,7 @@ export class HowFastApp {
     this.highlightCountries(slowerRecords);
     this.elements.results.hidden = false;
     this.document.body.classList.add('showing-results');
+    this.zoomMapToCountries(slowerRecords);
     this.elements.resultsTitle.focus({ preventScroll: true });
     this.document.defaultView?.scrollTo({ top: 0, behavior: this.getScrollBehavior('smooth') });
     this.updateReturnTopButton();
@@ -413,6 +417,73 @@ export class HowFastApp {
       const mapName = MAP_NAME_ALIASES[record.country] ?? record.country;
       this.mapPaths.get(mapName)?.classList.add('map-country-faster');
     }
+  }
+
+  private zoomMapToCountries(slowerRecords: NationalRecord[]): void {
+    if (this.mapAnimationFrame !== 0) cancelAnimationFrame(this.mapAnimationFrame);
+    this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(WORLD_MAP_VIEW_BOX));
+
+    const highlightedPaths = slowerRecords
+      .map((record) => MAP_NAME_ALIASES[record.country] ?? record.country)
+      .map((country) => this.mapPaths.get(country))
+      .filter((path): path is SVGPathElement => path !== undefined);
+    if (highlightedPaths.length === 0) return;
+
+    const boxes = highlightedPaths.map((path) => path.getBBox());
+    const left = Math.min(...boxes.map((box) => box.x));
+    const top = Math.min(...boxes.map((box) => box.y));
+    const right = Math.max(...boxes.map((box) => box.x + box.width));
+    const bottom = Math.max(...boxes.map((box) => box.y + box.height));
+    const target = this.createMapViewBox(left, top, right, bottom);
+
+    if (this.getScrollBehavior('smooth') === 'auto') {
+      this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(target));
+      return;
+    }
+
+    const startedAt = performance.now();
+    const animate = (now: number): void => {
+      const progress = Math.min(1, (now - startedAt) / MAP_ZOOM_DURATION_MS);
+      const easedProgress = 1 - (1 - progress) ** 3;
+      const current = {
+        x: WORLD_MAP_VIEW_BOX.x + (target.x - WORLD_MAP_VIEW_BOX.x) * easedProgress,
+        y: WORLD_MAP_VIEW_BOX.y + (target.y - WORLD_MAP_VIEW_BOX.y) * easedProgress,
+        width: WORLD_MAP_VIEW_BOX.width + (target.width - WORLD_MAP_VIEW_BOX.width) * easedProgress,
+        height:
+          WORLD_MAP_VIEW_BOX.height + (target.height - WORLD_MAP_VIEW_BOX.height) * easedProgress,
+      };
+      this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(current));
+
+      if (progress < 1) this.mapAnimationFrame = requestAnimationFrame(animate);
+      else this.mapAnimationFrame = 0;
+    };
+    this.mapAnimationFrame = requestAnimationFrame(animate);
+  }
+
+  private createMapViewBox(left: number, top: number, right: number, bottom: number) {
+    const contentWidth = Math.max(1, right - left);
+    const contentHeight = Math.max(1, bottom - top);
+    const padding = Math.max(12, Math.max(contentWidth, contentHeight) * 0.18);
+    let width = contentWidth + padding * 2;
+    let height = contentHeight + padding * 2;
+
+    if (width / height < 2) width = height * 2;
+    else height = width / 2;
+
+    width = Math.min(width, WORLD_MAP_VIEW_BOX.width);
+    height = Math.min(height, WORLD_MAP_VIEW_BOX.height);
+    const centreX = (left + right) / 2;
+    const centreY = (top + bottom) / 2;
+    return {
+      x: Math.max(0, Math.min(WORLD_MAP_VIEW_BOX.width - width, centreX - width / 2)),
+      y: Math.max(0, Math.min(WORLD_MAP_VIEW_BOX.height - height, centreY - height / 2)),
+      width,
+      height,
+    };
+  }
+
+  private formatViewBox(box: { x: number; y: number; width: number; height: number }): string {
+    return `${box.x} ${box.y} ${box.width} ${box.height}`;
   }
 
   private editTime(): void {
