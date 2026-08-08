@@ -37,16 +37,50 @@ describe('time entry', () => {
     );
   });
 
-  it('caps the leading wheel just beyond the slowest category record', () => {
+  it('caps the leading wheel just beyond double the slowest category record', () => {
     const record = (milliseconds: number) => ({
       country: 'Testland',
       milliseconds,
       sourceUrl: 'https://example.test/record',
     });
 
-    expect(getTimeFieldsForRecords('100 metres', [record(14_410)])[0]?.max).toBe(15);
-    expect(getTimeFieldsForRecords('800 metres', [record(125_050)])[0]?.max).toBe(3);
-    expect(getTimeFieldsForRecords('Marathon', [record(11_302_000)])[0]?.max).toBe(4);
+    expect(getTimeFieldsForRecords('100 metres', [record(14_410)])[0]?.max).toBe(29);
+    expect(getTimeFieldsForRecords('800 metres', [record(125_050)])[0]?.max).toBe(5);
+    expect(getTimeFieldsForRecords('1500 metres', [record(259_650)])[0]?.max).toBe(9);
+    expect(getTimeFieldsForRecords('Marathon', [record(11_302_000)])[0]?.max).toBe(7);
+  });
+
+  it('adds larger time fields instead of overflowing minutes or seconds', () => {
+    const record = (milliseconds: number) => ({
+      country: 'Testland',
+      milliseconds,
+      sourceUrl: 'https://example.test/record',
+    });
+    const sprintFields = getTimeFieldsForRecords('200 metres', [record(30_870)]);
+    const trackFields = getTimeFieldsForRecords('10,000 metres', [record(2_909_000)]);
+    const roadFields = getTimeFieldsForRecords('Marathon', [record(18_581_000)]);
+
+    expect(sprintFields.map(({ name, max }) => ({ name, max }))).toEqual([
+      { name: 'minutes', max: 2 },
+      { name: 'seconds', max: 59 },
+      { name: 'hundredths', max: 99 },
+    ]);
+    expect(trackFields.map(({ name, max }) => ({ name, max }))).toEqual([
+      { name: 'hours', max: 2 },
+      { name: 'minutes', max: 59 },
+      { name: 'seconds', max: 59 },
+      { name: 'hundredths', max: 99 },
+    ]);
+    expect(timePartsToMilliseconds('200 metres', { minutes: 1, seconds: 2 }, sprintFields)).toBe(
+      62_000,
+    );
+    expect(timePartsToMilliseconds('10,000 metres', { hours: 1, minutes: 37 }, trackFields)).toBe(
+      5_820_000,
+    );
+    expect(timePartsToMilliseconds('Marathon', { hours: 11 }, roadFields)).toBe(39_600_000);
+    expect(() => timePartsToMilliseconds('10,000 metres', { minutes: 97 }, trackFields)).toThrow(
+      'Minutes must be between 0 and 59.',
+    );
   });
 });
 

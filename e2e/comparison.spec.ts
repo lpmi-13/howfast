@@ -181,23 +181,61 @@ test('rebuilds the picker when the browser restores native selections', async ({
   await expect(page.getByRole('spinbutton', { name: 'Hundredths' })).toBeVisible();
 });
 
-test('allows one leftmost value beyond the slowest category record', async ({ page }) => {
+test('allows one leftmost value beyond double the slowest category record', async ({ page }) => {
   await page.goto('/');
   await page.getByLabel('Event').selectOption('100 metres');
   await page.getByLabel('Category').selectOption('women');
 
   const secondsWheel = page.getByRole('spinbutton', { name: 'Seconds' });
-  await expect(secondsWheel).toHaveAttribute('aria-valuemax', '15');
+  await expect(secondsWheel).toHaveAttribute('aria-valuemax', '29');
   await secondsWheel.press('End');
-  await expect(secondsWheel).toHaveAttribute('aria-valuenow', '15');
+  await expect(secondsWheel).toHaveAttribute('aria-valuenow', '29');
+
+  await page.getByLabel('Event').selectOption('200 metres');
+
+  const sprintMinutesWheel = page.getByRole('spinbutton', { name: 'Minutes' });
+  await expect(sprintMinutesWheel).toHaveAttribute('aria-valuemax', '2');
+  await expect(page.getByRole('spinbutton', { name: 'Seconds' })).toHaveAttribute(
+    'aria-valuemax',
+    '59',
+  );
+  await sprintMinutesWheel.press('End');
+  await expect(page.getByRole('button', { name: 'compare', exact: true })).toBeEnabled();
 
   await page.getByLabel('Event').selectOption('800 metres');
   await page.getByLabel('Category').selectOption('men');
 
   const minutesWheel = page.getByRole('spinbutton', { name: 'Minutes' });
-  await expect(minutesWheel).toHaveAttribute('aria-valuemax', '3');
+  await expect(minutesWheel).toHaveAttribute('aria-valuemax', '5');
   await minutesWheel.press('End');
-  await expect(minutesWheel).toHaveAttribute('aria-valuenow', '3');
+  await expect(minutesWheel).toHaveAttribute('aria-valuenow', '5');
+
+  await page.getByLabel('Event').selectOption('1500 metres');
+
+  const longerMinutesWheel = page.getByRole('spinbutton', { name: 'Minutes' });
+  await expect(longerMinutesWheel).toHaveAttribute('aria-valuemax', '9');
+  await longerMinutesWheel.press('End');
+  await expect(longerMinutesWheel).toHaveAttribute('aria-valuenow', '9');
+
+  await page.getByLabel('Event').selectOption('10,000 metres');
+  await page.getByLabel('Category').selectOption('women');
+
+  await expect(page.getByRole('spinbutton', { name: 'Hours' })).toHaveAttribute(
+    'aria-valuemax',
+    '2',
+  );
+  await expect(page.getByRole('spinbutton', { name: 'Minutes' })).toHaveAttribute(
+    'aria-valuemax',
+    '59',
+  );
+  await expect(page.getByRole('spinbutton', { name: 'Seconds' })).toHaveAttribute(
+    'aria-valuemax',
+    '59',
+  );
+  await expect(page.getByRole('spinbutton', { name: 'Hundredths' })).toHaveAttribute(
+    'aria-valuemax',
+    '99',
+  );
 });
 
 test('has no serious accessibility violations or horizontal overflow', async ({ page }) => {

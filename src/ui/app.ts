@@ -317,7 +317,8 @@ export class HowFastApp {
 
     if (isEventName(event) && isGender(gender) && !this.elements.timeEntry.disabled) {
       try {
-        const milliseconds = timePartsToMilliseconds(event, this.readTimeParts());
+        const fields = getTimeFieldsForRecords(event, records.events[event][gender]);
+        const milliseconds = timePartsToMilliseconds(event, this.readTimeParts(), fields);
         this.elements.timePreview.textContent = `Entered time: ${formatTime(milliseconds)}`;
         validTime = true;
       } catch {
@@ -341,7 +342,8 @@ export class HowFastApp {
 
     let userTime: number;
     try {
-      userTime = timePartsToMilliseconds(event, this.readTimeParts());
+      const fields = getTimeFieldsForRecords(event, records.events[event][gender]);
+      userTime = timePartsToMilliseconds(event, this.readTimeParts(), fields);
     } catch (error) {
       this.elements.formError.textContent =
         error instanceof Error ? error.message : 'Enter a valid time.';

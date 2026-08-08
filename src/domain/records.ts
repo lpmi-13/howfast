@@ -57,6 +57,18 @@ const FIELD_DEFINITIONS: Record<TimePart, TimePartDefinition> = {
   hundredths: { name: 'hundredths', label: 'Hundredths', max: 99 },
 };
 
+const TIME_PART_MILLISECONDS: Record<TimePart, number> = {
+  hours: 3_600_000,
+  minutes: 60_000,
+  seconds: 1_000,
+  hundredths: 10,
+};
+
+const NEXT_LARGER_TIME_PART: Partial<Record<TimePart, TimePart>> = {
+  minutes: 'hours',
+  seconds: 'minutes',
+};
+
 export function getTimeFields(event: EventName): TimePartDefinition[] {
   return EVENT_FIELDS[event].map((part) => FIELD_DEFINITIONS[part]);
 }
@@ -72,12 +84,23 @@ export function getTimeFieldsForRecords(
     (slowest, record) => Math.max(slowest, record.milliseconds),
     0,
   );
-  const leadingField = fields[0];
-  if (!leadingField) return fields;
+  const maximumTime = slowestRecord * 2;
+  let leadingField = fields[0];
 
-  const leadingUnit =
-    leadingField.name === 'hours' ? 3_600_000 : leadingField.name === 'minutes' ? 60_000 : 1_000;
-  leadingField.max = Math.floor(slowestRecord / leadingUnit) + 1;
+  while (leadingField) {
+    const maximumLeadingValue =
+      Math.floor(maximumTime / TIME_PART_MILLISECONDS[leadingField.name]) + 1;
+    const largerPart = NEXT_LARGER_TIME_PART[leadingField.name];
+
+    if (maximumLeadingValue <= leadingField.max || largerPart === undefined) {
+      leadingField.max = maximumLeadingValue;
+      break;
+    }
+
+    leadingField = { ...FIELD_DEFINITIONS[largerPart] };
+    fields.unshift(leadingField);
+  }
+
   return fields;
 }
 
@@ -92,10 +115,9 @@ export function isGender(value: string): value is Gender {
 export function timePartsToMilliseconds(
   event: EventName,
   values: Partial<Record<TimePart, number>>,
+  fields: TimePartDefinition[] = getTimeFields(event),
 ): number {
-  const visibleFields = getTimeFields(event);
-
-  for (const field of visibleFields) {
+  for (const field of fields) {
     const value = values[field.name] ?? 0;
     if (!Number.isInteger(value) || value < 0 || value > field.max) {
       throw new RangeError(`${field.label} must be between 0 and ${field.max}.`);
