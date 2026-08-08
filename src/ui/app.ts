@@ -30,16 +30,37 @@ interface AppElements {
   resultsDetail: HTMLElement;
   editTimeButton: HTMLButtonElement;
   returnTopButton: HTMLButtonElement;
+  mapPanel: HTMLElement;
   worldMap: SVGSVGElement;
+  mapDescription: SVGDescElement;
+  mapOverviewNavigation: HTMLElement;
+  mapOverviewStatus: HTMLElement;
+  mapExploreButton: HTMLButtonElement;
+  mapFocusNavigation: HTMLElement;
+  mapPreviousButton: HTMLButtonElement;
+  mapFocusStatus: HTMLElement;
+  mapNextButton: HTMLButtonElement;
+  mapViewAllButton: HTMLButtonElement;
+  countryPanel: HTMLElement;
   countryList: HTMLOListElement;
   dataStamp: HTMLElement;
   sourceCount: HTMLElement;
+}
+
+interface MapViewBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 const records = recordsJson as unknown as RecordsData;
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 const WORLD_MAP_VIEW_BOX = { x: 0, y: 0, width: 1000, height: 500 } as const;
 const MAP_ZOOM_DURATION_MS = 900;
+const MAP_COMPACT_VIEW_MAX_WIDTH = 650;
+const MAP_FOCUSED_VIEW_MIN_WIDTH = 260;
+const MAP_NUMBERED_MARKER_LIMIT = 12;
 const MAP_NAME_ALIASES: Record<string, string> = {
   'Antigua and Barbuda': 'Antigua and Barb.',
   'Central African Republic': 'Central African Rep.',
@@ -69,7 +90,13 @@ const MAP_MARKER_COORDINATES: Record<string, [number, number]> = {
 export class HowFastApp {
   private readonly elements: AppElements;
   private readonly mapPaths = new Map<string, SVGGraphicsElement>();
+  private readonly mapPositions = new Map<string, [number, number]>();
+  private mapResultMarkerLayer: SVGGElement | undefined;
   private mapAnimationFrame = 0;
+  private mapOverviewViewBox: MapViewBox = { ...WORLD_MAP_VIEW_BOX };
+  private resultRecords: NationalRecord[] = [];
+  private mappableResultIndices: number[] = [];
+  private focusedResultIndex: number | undefined;
 
   constructor(private readonly document: Document = globalThis.document) {
     this.elements = this.getElements();
@@ -86,6 +113,15 @@ export class HowFastApp {
     this.elements.form.addEventListener('submit', (event) => this.compare(event));
     this.elements.editTimeButton.addEventListener('click', () => this.editTime());
     this.elements.returnTopButton.addEventListener('click', () => this.returnToTop());
+    this.elements.mapExploreButton.addEventListener('click', () => this.focusFirstMapResult());
+    this.elements.mapPreviousButton.addEventListener('click', () =>
+      this.focusAdjacentMapResult(-1),
+    );
+    this.elements.mapNextButton.addEventListener('click', () => this.focusAdjacentMapResult(1));
+    this.elements.mapViewAllButton.addEventListener('click', () => this.showMapOverview());
+    this.elements.countryPanel.addEventListener('scroll', () => this.updateReturnTopButton(), {
+      passive: true,
+    });
     this.document.defaultView?.addEventListener('scroll', () => this.updateReturnTopButton(), {
       passive: true,
     });
@@ -367,11 +403,13 @@ export class HowFastApp {
         : `You’re faster than ${count} ${count === 1 ? 'country' : 'countries'}.`;
     const categoryLabel = gender === 'women' ? "women's" : "men's";
     this.elements.resultsDetail.textContent = `${formatTime(userTime)} for the ${categoryLabel} ${event}.`;
-    this.renderCountryList(slowerRecords);
-    this.highlightCountries(slowerRecords);
+    this.resultRecords = slowerRecords;
+    this.elements.countryPanel.scrollTop = 0;
     this.elements.results.hidden = false;
     this.document.body.classList.add('showing-results');
-    this.zoomMapToCountries(slowerRecords);
+    this.renderCountryList(slowerRecords);
+    this.highlightCountries(slowerRecords);
+    this.configureResultMap(slowerRecords);
     this.elements.resultsTitle.focus({ preventScroll: true });
     this.document.defaultView?.scrollTo({ top: 0, behavior: this.getScrollBehavior('smooth') });
     this.updateReturnTopButton();
@@ -388,18 +426,41 @@ export class HowFastApp {
       return;
     }
 
-    slowerRecords.forEach((record) => {
+    slowerRecords.forEach((record, index) => {
       const item = this.document.createElement('li');
+      const number = this.document.createElement('span');
+      const copy = this.document.createElement('div');
       const source = this.document.createElement('a');
       const time = this.document.createElement('strong');
 
+      item.className = 'country-result';
+      item.dataset.resultIndex = index.toString();
+      number.className = 'country-result-number';
+      number.textContent = (index + 1).toString();
+      number.setAttribute('aria-hidden', 'true');
+      copy.className = 'country-result-copy';
       source.href = record.sourceUrl;
       source.rel = 'external';
       source.textContent = record.country;
       source.setAttribute('aria-label', `${record.country} record source on Wikipedia`);
       time.textContent = formatTime(record.milliseconds);
 
-      item.append(source, time);
+      copy.append(source, time);
+      item.append(number, copy);
+
+      if (this.getMapCountry(record.country)) {
+        const showOnMap = this.document.createElement('button');
+        showOnMap.className = 'country-map-button';
+        showOnMap.type = 'button';
+        showOnMap.textContent = 'Show on map';
+        showOnMap.dataset.mapResultIndex = index.toString();
+        showOnMap.setAttribute('aria-controls', 'world-map');
+        showOnMap.setAttribute('aria-label', `Show ${record.country} on map`);
+        showOnMap.setAttribute('aria-pressed', 'false');
+        showOnMap.addEventListener('click', () => this.focusMapResult(index, true));
+        item.append(showOnMap);
+      }
+
       this.elements.countryList.append(item);
     });
   }
@@ -422,12 +483,20 @@ export class HowFastApp {
       path.append(title);
       this.elements.worldMap.append(path);
       this.mapPaths.set(countryName, path);
+
+      const position = pathGenerator.centroid(feature as GeoPermissibleObjects);
+      if (position.every(Number.isFinite)) this.mapPositions.set(countryName, position);
     }
 
     for (const [countryName, coordinates] of Object.entries(MAP_MARKER_COORDINATES)) {
       if (this.mapPaths.has(countryName)) continue;
       this.renderMapMarker(countryName, coordinates, projection);
     }
+
+    this.mapResultMarkerLayer = this.document.createElementNS(SVG_NAMESPACE, 'g');
+    this.mapResultMarkerLayer.classList.add('map-result-markers');
+    this.mapResultMarkerLayer.setAttribute('aria-hidden', 'true');
+    this.elements.worldMap.append(this.mapResultMarkerLayer);
   }
 
   private renderMapMarker(
@@ -449,6 +518,7 @@ export class HowFastApp {
     marker.append(title);
     this.elements.worldMap.append(marker);
     this.mapPaths.set(countryName, marker);
+    this.mapPositions.set(countryName, position);
   }
 
   private getMapCountry(country: string): SVGGraphicsElement | undefined {
@@ -458,29 +528,298 @@ export class HowFastApp {
     );
   }
 
+  private getMapPosition(country: string): [number, number] | undefined {
+    return (
+      this.mapPositions.get(country) ??
+      (MAP_NAME_ALIASES[country] ? this.mapPositions.get(MAP_NAME_ALIASES[country]) : undefined)
+    );
+  }
+
   private highlightCountries(slowerRecords: NationalRecord[]): void {
-    for (const path of this.mapPaths.values()) path.classList.remove('map-country-faster');
+    for (const path of this.mapPaths.values()) {
+      path.classList.remove('map-country-faster', 'map-country-focused');
+    }
 
     for (const record of slowerRecords) {
       this.getMapCountry(record.country)?.classList.add('map-country-faster');
     }
   }
 
-  private zoomMapToCountries(slowerRecords: NationalRecord[]): void {
-    if (this.mapAnimationFrame !== 0) cancelAnimationFrame(this.mapAnimationFrame);
-    this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(WORLD_MAP_VIEW_BOX));
+  private configureResultMap(slowerRecords: NationalRecord[]): void {
+    this.focusedResultIndex = undefined;
+    this.elements.worldMap.classList.remove('map-view-focused');
+    for (const path of this.mapPaths.values()) path.classList.remove('map-country-focused');
+    this.mappableResultIndices = slowerRecords.flatMap((record, index) =>
+      this.getMapCountry(record.country) && this.getMapPosition(record.country) ? [index] : [],
+    );
 
-    const highlightedPaths = slowerRecords
-      .map((record) => this.getMapCountry(record.country))
-      .filter((path): path is SVGGraphicsElement => path !== undefined);
-    if (highlightedPaths.length === 0) return;
+    const highlightedPaths = this.mappableResultIndices.flatMap((index) => {
+      const path = this.getMapCountry(slowerRecords[index]?.country ?? '');
+      return path ? [path] : [];
+    });
 
-    const boxes = highlightedPaths.map((path) => path.getBBox());
+    if (highlightedPaths.length === 0) {
+      this.mapOverviewViewBox = { ...WORLD_MAP_VIEW_BOX };
+      this.renderResultMarkers([], this.mapOverviewViewBox);
+      this.elements.mapOverviewNavigation.hidden = true;
+      this.elements.mapFocusNavigation.hidden = true;
+      this.elements.mapDescription.textContent = 'The countries in the result are listed below.';
+      this.animateMapTo(this.mapOverviewViewBox);
+      return;
+    }
+
+    const fittedViewBox = this.createViewBoxForPaths(highlightedPaths);
+    this.mapOverviewViewBox =
+      highlightedPaths.length > 1 && fittedViewBox.width <= MAP_COMPACT_VIEW_MAX_WIDTH
+        ? fittedViewBox
+        : { ...WORLD_MAP_VIEW_BOX };
+    this.renderResultMarkers(slowerRecords, this.mapOverviewViewBox);
+
+    if (this.mappableResultIndices.length === 1) {
+      this.focusMapResult(this.mappableResultIndices[0] ?? 0, false);
+      return;
+    }
+
+    this.showMapOverview(false);
+  }
+
+  private renderResultMarkers(slowerRecords: NationalRecord[], viewBox: MapViewBox): void {
+    this.mapResultMarkerLayer?.replaceChildren();
+    if (
+      !this.mapResultMarkerLayer ||
+      slowerRecords.length === 0 ||
+      slowerRecords.length > MAP_NUMBERED_MARKER_LIMIT
+    ) {
+      return;
+    }
+
+    const isMobile = this.document.defaultView?.matchMedia('(max-width: 959px)').matches ?? false;
+    const radius = viewBox.width * (isMobile ? 0.032 : 0.012);
+    const minimumDistance = radius * 2.2;
+    const placedPositions: [number, number][] = [];
+
+    slowerRecords.forEach((record, index) => {
+      const origin = this.getMapPosition(record.country);
+      if (!origin) return;
+
+      const position = this.findMarkerPosition(
+        origin,
+        placedPositions,
+        viewBox,
+        radius,
+        minimumDistance,
+        index,
+      );
+      placedPositions.push(position);
+
+      if (Math.hypot(position[0] - origin[0], position[1] - origin[1]) > radius * 0.5) {
+        const leader = this.document.createElementNS(SVG_NAMESPACE, 'line');
+        leader.classList.add('map-result-marker-leader');
+        leader.setAttribute('x1', origin[0].toString());
+        leader.setAttribute('y1', origin[1].toString());
+        leader.setAttribute('x2', position[0].toString());
+        leader.setAttribute('y2', position[1].toString());
+        this.mapResultMarkerLayer?.append(leader);
+      }
+
+      const marker = this.document.createElementNS(SVG_NAMESPACE, 'g');
+      const badge = this.document.createElementNS(SVG_NAMESPACE, 'circle');
+      const label = this.document.createElementNS(SVG_NAMESPACE, 'text');
+      marker.classList.add('map-result-marker');
+      marker.dataset.resultIndex = index.toString();
+      marker.setAttribute('transform', `translate(${position[0]} ${position[1]})`);
+      badge.classList.add('map-result-marker-badge');
+      badge.setAttribute('r', radius.toString());
+      label.classList.add('map-result-marker-label');
+      label.setAttribute('font-size', (radius * (index >= 9 ? 0.72 : 0.95)).toString());
+      label.textContent = (index + 1).toString();
+      marker.append(badge, label);
+      this.mapResultMarkerLayer?.append(marker);
+    });
+  }
+
+  private findMarkerPosition(
+    origin: [number, number],
+    placedPositions: [number, number][],
+    viewBox: MapViewBox,
+    radius: number,
+    minimumDistance: number,
+    markerIndex: number,
+  ): [number, number] {
+    const clampToViewBox = ([x, y]: [number, number]): [number, number] => [
+      Math.max(viewBox.x + radius, Math.min(viewBox.x + viewBox.width - radius, x)),
+      Math.max(viewBox.y + radius, Math.min(viewBox.y + viewBox.height - radius, y)),
+    ];
+    const isAvailable = ([x, y]: [number, number]): boolean =>
+      placedPositions.every(
+        ([placedX, placedY]) => Math.hypot(x - placedX, y - placedY) >= minimumDistance,
+      );
+    const originalCandidate = clampToViewBox(origin);
+    if (isAvailable(originalCandidate)) return originalCandidate;
+
+    for (let ring = 1; ring <= 4; ring += 1) {
+      for (let step = 0; step < 12; step += 1) {
+        const angle = ((step + markerIndex * 3) / 12) * Math.PI * 2;
+        const distance = minimumDistance * ring;
+        const candidate = clampToViewBox([
+          origin[0] + Math.cos(angle) * distance,
+          origin[1] + Math.sin(angle) * distance,
+        ]);
+        if (isAvailable(candidate)) return candidate;
+      }
+    }
+
+    return originalCandidate;
+  }
+
+  private focusFirstMapResult(): void {
+    const firstResultIndex = this.mappableResultIndices[0];
+    if (firstResultIndex !== undefined) this.focusMapResult(firstResultIndex, false);
+  }
+
+  private focusAdjacentMapResult(offset: -1 | 1): void {
+    if (this.mappableResultIndices.length === 0) return;
+    const currentPosition = this.mappableResultIndices.indexOf(this.focusedResultIndex ?? -1);
+    const nextPosition =
+      (Math.max(0, currentPosition) + offset + this.mappableResultIndices.length) %
+      this.mappableResultIndices.length;
+    const nextResultIndex = this.mappableResultIndices[nextPosition] ?? 0;
+    this.focusMapResult(nextResultIndex, false);
+    this.scrollResultIntoView(nextResultIndex);
+  }
+
+  private scrollResultIntoView(resultIndex: number): void {
+    const result = this.elements.countryList.querySelector<HTMLElement>(
+      `[data-result-index="${resultIndex}"]`,
+    );
+    result?.scrollIntoView({
+      behavior: this.getScrollBehavior('smooth'),
+      block: 'center',
+      inline: 'nearest',
+    });
+  }
+
+  private focusMapResult(resultIndex: number, scrollToMap: boolean): void {
+    const record = this.resultRecords[resultIndex];
+    const path = record ? this.getMapCountry(record.country) : undefined;
+    if (!record || !path || !this.mappableResultIndices.includes(resultIndex)) return;
+
+    this.focusedResultIndex = resultIndex;
+    this.elements.worldMap.classList.add('map-view-focused');
+    this.elements.mapOverviewNavigation.hidden = true;
+    this.elements.mapFocusNavigation.hidden = false;
+    for (const mapPath of this.mapPaths.values()) mapPath.classList.remove('map-country-focused');
+    path.classList.add('map-country-focused');
+    this.updateFocusedResultState();
+
+    const navigationPosition = this.mappableResultIndices.indexOf(resultIndex);
+    const hasMultipleResults = this.mappableResultIndices.length > 1;
+    const previousPosition =
+      (navigationPosition - 1 + this.mappableResultIndices.length) %
+      this.mappableResultIndices.length;
+    const nextPosition = (navigationPosition + 1) % this.mappableResultIndices.length;
+    const previousRecord = this.resultRecords[this.mappableResultIndices[previousPosition] ?? 0];
+    const nextRecord = this.resultRecords[this.mappableResultIndices[nextPosition] ?? 0];
+    this.elements.mapPreviousButton.disabled = !hasMultipleResults;
+    this.elements.mapNextButton.disabled = !hasMultipleResults;
+    this.elements.mapPreviousButton.setAttribute(
+      'aria-label',
+      hasMultipleResults
+        ? `Show ${previousRecord?.country ?? 'previous country'} on map`
+        : 'Previous country',
+    );
+    this.elements.mapNextButton.setAttribute(
+      'aria-label',
+      hasMultipleResults ? `Show ${nextRecord?.country ?? 'next country'} on map` : 'Next country',
+    );
+    this.elements.mapFocusStatus.textContent = `${resultIndex + 1} of ${this.resultRecords.length}: ${record.country}`;
+    this.elements.mapDescription.textContent = `Focused on ${record.country}, result ${resultIndex + 1} of ${this.resultRecords.length}.`;
+    this.animateMapTo(this.createFocusedMapViewBox(path));
+
+    if (scrollToMap) {
+      this.elements.mapFocusStatus.focus({ preventScroll: true });
+      this.elements.mapPanel.scrollIntoView({
+        behavior: this.getScrollBehavior('smooth'),
+        block: 'start',
+      });
+    }
+  }
+
+  private showMapOverview(animate = true): void {
+    this.focusedResultIndex = undefined;
+    this.elements.worldMap.classList.remove('map-view-focused');
+    this.elements.mapFocusNavigation.hidden = true;
+    this.elements.mapOverviewNavigation.hidden = this.mappableResultIndices.length === 0;
+    for (const path of this.mapPaths.values()) path.classList.remove('map-country-focused');
+    this.updateFocusedResultState();
+
+    const count = this.resultRecords.length;
+    this.elements.mapOverviewStatus.textContent = `${count} ${count === 1 ? 'country' : 'countries'} shown`;
+    this.elements.mapDescription.textContent =
+      count <= MAP_NUMBERED_MARKER_LIMIT
+        ? 'Numbered markers correspond to the countries in the results list.'
+        : 'Highlighted countries are listed below the map.';
+
+    if (animate) this.animateMapTo(this.mapOverviewViewBox);
+    else
+      this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(this.mapOverviewViewBox));
+  }
+
+  private updateFocusedResultState(): void {
+    this.elements.countryList.querySelectorAll<HTMLElement>('.country-result').forEach((item) => {
+      const index = Number(item.dataset.resultIndex);
+      item.classList.toggle('country-result-focused', index === this.focusedResultIndex);
+    });
+    this.elements.countryList
+      .querySelectorAll<HTMLButtonElement>('[data-map-result-index]')
+      .forEach((button) => {
+        button.setAttribute(
+          'aria-pressed',
+          (Number(button.dataset.mapResultIndex) === this.focusedResultIndex).toString(),
+        );
+      });
+  }
+
+  private createViewBoxForPaths(paths: SVGGraphicsElement[]): MapViewBox {
+    const boxes = paths.map((path) => path.getBBox());
     const left = Math.min(...boxes.map((box) => box.x));
     const top = Math.min(...boxes.map((box) => box.y));
     const right = Math.max(...boxes.map((box) => box.x + box.width));
     const bottom = Math.max(...boxes.map((box) => box.y + box.height));
-    const target = this.createMapViewBox(left, top, right, bottom);
+    return this.createMapViewBox(left, top, right, bottom);
+  }
+
+  private createFocusedMapViewBox(path: SVGGraphicsElement): MapViewBox {
+    const fittedViewBox = this.createViewBoxForPaths([path]);
+    if (fittedViewBox.width >= MAP_FOCUSED_VIEW_MIN_WIDTH) return fittedViewBox;
+
+    const width = MAP_FOCUSED_VIEW_MIN_WIDTH;
+    const height = width / 2;
+    const centreX = fittedViewBox.x + fittedViewBox.width / 2;
+    const centreY = fittedViewBox.y + fittedViewBox.height / 2;
+    return {
+      x: Math.max(0, Math.min(WORLD_MAP_VIEW_BOX.width - width, centreX - width / 2)),
+      y: Math.max(0, Math.min(WORLD_MAP_VIEW_BOX.height - height, centreY - height / 2)),
+      width,
+      height,
+    };
+  }
+
+  private animateMapTo(target: MapViewBox): void {
+    if (this.mapAnimationFrame !== 0) cancelAnimationFrame(this.mapAnimationFrame);
+
+    const currentValues = (this.elements.worldMap.getAttribute('viewBox') ?? '')
+      .split(' ')
+      .map(Number);
+    const start =
+      currentValues.length === 4 && currentValues.every(Number.isFinite)
+        ? {
+            x: currentValues[0] ?? WORLD_MAP_VIEW_BOX.x,
+            y: currentValues[1] ?? WORLD_MAP_VIEW_BOX.y,
+            width: currentValues[2] ?? WORLD_MAP_VIEW_BOX.width,
+            height: currentValues[3] ?? WORLD_MAP_VIEW_BOX.height,
+          }
+        : { ...WORLD_MAP_VIEW_BOX };
 
     if (this.getScrollBehavior('smooth') === 'auto') {
       this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(target));
@@ -492,11 +831,10 @@ export class HowFastApp {
       const progress = Math.min(1, (now - startedAt) / MAP_ZOOM_DURATION_MS);
       const easedProgress = 1 - (1 - progress) ** 3;
       const current = {
-        x: WORLD_MAP_VIEW_BOX.x + (target.x - WORLD_MAP_VIEW_BOX.x) * easedProgress,
-        y: WORLD_MAP_VIEW_BOX.y + (target.y - WORLD_MAP_VIEW_BOX.y) * easedProgress,
-        width: WORLD_MAP_VIEW_BOX.width + (target.width - WORLD_MAP_VIEW_BOX.width) * easedProgress,
-        height:
-          WORLD_MAP_VIEW_BOX.height + (target.height - WORLD_MAP_VIEW_BOX.height) * easedProgress,
+        x: start.x + (target.x - start.x) * easedProgress,
+        y: start.y + (target.y - start.y) * easedProgress,
+        width: start.width + (target.width - start.width) * easedProgress,
+        height: start.height + (target.height - start.height) * easedProgress,
       };
       this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(current));
 
@@ -538,6 +876,7 @@ export class HowFastApp {
     const previousScrollBehavior = documentElement.style.scrollBehavior;
 
     this.elements.results.hidden = true;
+    this.elements.countryPanel.scrollTop = 0;
     this.restoreSelectionState();
     this.document.body.classList.remove('showing-results');
 
@@ -554,7 +893,16 @@ export class HowFastApp {
 
   private returnToTop(): void {
     this.elements.resultsTitle.focus({ preventScroll: true });
-    this.document.defaultView?.scrollTo({ top: 0, behavior: this.getScrollBehavior('smooth') });
+    const behavior = this.getScrollBehavior('smooth');
+    if (this.usesDesktopResultsLayout()) {
+      this.elements.countryPanel.scrollTo({ top: 0, behavior });
+    } else {
+      this.document.defaultView?.scrollTo({ top: 0, behavior });
+    }
+  }
+
+  private usesDesktopResultsLayout(): boolean {
+    return this.document.defaultView?.matchMedia('(min-width: 960px)').matches ?? false;
   }
 
   private getScrollBehavior(behavior: ScrollBehavior): ScrollBehavior {
@@ -567,10 +915,13 @@ export class HowFastApp {
   private updateReturnTopButton(): void {
     const view = this.document.defaultView;
     const visibilityThreshold = view ? Math.max(160, view.innerHeight * 0.25) : 160;
+    const scrollOffset = this.usesDesktopResultsLayout()
+      ? this.elements.countryPanel.scrollTop
+      : (view?.scrollY ?? 0);
     const visible =
       view !== null &&
       this.document.body.classList.contains('showing-results') &&
-      view.scrollY > visibilityThreshold;
+      scrollOffset > visibilityThreshold;
 
     this.elements.returnTopButton.classList.toggle('result-top-button-visible', visible);
     this.elements.returnTopButton.disabled = !visible;
@@ -613,7 +964,18 @@ export class HowFastApp {
       resultsDetail: this.requireElement('results-detail'),
       editTimeButton: this.requireElement<HTMLButtonElement>('edit-time'),
       returnTopButton: this.requireElement<HTMLButtonElement>('return-top'),
+      mapPanel: this.requireElement('map-panel'),
       worldMap: this.requireElement<SVGSVGElement>('world-map'),
+      mapDescription: this.requireElement<SVGDescElement>('map-description'),
+      mapOverviewNavigation: this.requireElement('map-overview-navigation'),
+      mapOverviewStatus: this.requireElement('map-overview-status'),
+      mapExploreButton: this.requireElement<HTMLButtonElement>('map-explore'),
+      mapFocusNavigation: this.requireElement('map-focus-navigation'),
+      mapPreviousButton: this.requireElement<HTMLButtonElement>('map-previous'),
+      mapFocusStatus: this.requireElement('map-focus-status'),
+      mapNextButton: this.requireElement<HTMLButtonElement>('map-next'),
+      mapViewAllButton: this.requireElement<HTMLButtonElement>('map-view-all'),
+      countryPanel: this.requireElement('country-panel'),
       countryList: this.requireElement<HTMLOListElement>('country-list'),
       dataStamp: this.requireElement('data-stamp'),
       sourceCount: this.requireElement('source-count'),

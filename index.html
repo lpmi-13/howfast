@@ -135,19 +135,54 @@
           </button>
         </nav>
 
-        <div class="map-card">
-          <svg
-            id="world-map"
-            viewBox="0 0 1000 500"
-            role="img"
-            aria-labelledby="map-title map-description"
-          >
-            <title id="map-title">World map of countries whose national record your time beats</title>
-            <desc id="map-description">Highlighted countries are listed below the map.</desc>
-          </svg>
+        <div class="map-panel" id="map-panel">
+          <div class="map-card">
+            <svg
+              id="world-map"
+              viewBox="0 0 1000 500"
+              role="img"
+              aria-labelledby="map-title map-description"
+            >
+              <title id="map-title">
+                World map of countries whose national record your time beats
+              </title>
+              <desc id="map-description">Highlighted countries are listed below the map.</desc>
+            </svg>
+          </div>
+
+          <div class="map-overview-navigation" id="map-overview-navigation" hidden>
+            <p id="map-overview-status"></p>
+            <button class="map-text-button" id="map-explore" type="button">
+              Explore countries
+            </button>
+          </div>
+
+          <fieldset class="map-focus-navigation" id="map-focus-navigation" hidden>
+            <legend class="visually-hidden">Focused map controls</legend>
+            <div class="map-focus-row">
+              <button class="map-step-button" id="map-previous" type="button">
+                <span class="map-step-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m10 6-6 6 6 6M4 12h16" />
+                  </svg>
+                </span>
+                <span class="visually-hidden">Previous country</span>
+              </button>
+              <p id="map-focus-status" tabindex="-1" aria-live="polite"></p>
+              <button class="map-step-button" id="map-next" type="button">
+                <span class="map-step-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m14 6 6 6-6 6M4 12h16" />
+                  </svg>
+                </span>
+                <span class="visually-hidden">Next country</span>
+              </button>
+            </div>
+            <button class="map-text-button" id="map-view-all" type="button">View all</button>
+          </fieldset>
         </div>
 
-        <div class="country-panel">
+        <div class="country-panel" id="country-panel">
           <ol class="country-list" id="country-list"></ol>
         </div>
       </section>

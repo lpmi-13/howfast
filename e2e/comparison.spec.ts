@@ -99,32 +99,48 @@ test('compares a sprint time using only bundled data', async ({ page }, testInfo
       .locator('.map-card')
       .evaluate((map) => map.scrollWidth > map.clientWidth + 1);
     const changeTimeBox = await changeTimeButton.boundingBox();
+    const resultsHeaderBox = await page.locator('.results-header').boundingBox();
     const mapBox = await page.locator('.map-card').boundingBox();
     expect(mapOverflows).toBe(false);
     expect(changeTimeBox?.y).toBeLessThan(100);
+    expect(resultsHeaderBox?.y).toBeLessThan(mapBox?.y ?? 0);
     expect((changeTimeBox?.y ?? 0) + (changeTimeBox?.height ?? 0)).toBeLessThanOrEqual(
       mapBox?.y ?? 0,
     );
   }
 
   const returnToTopButton = page.getByRole('button', { name: 'Return to the top of the results' });
+  const scrollResultsToBottom = async () => {
+    if (testInfo.project.name === 'desktop-chrome') {
+      await page
+        .locator('#country-panel')
+        .evaluate((panel) => panel.scrollTo(0, panel.scrollHeight));
+    } else {
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    }
+  };
+  const resultScrollOffset = () =>
+    testInfo.project.name === 'desktop-chrome'
+      ? page.locator('#country-panel').evaluate((panel) => panel.scrollTop)
+      : page.evaluate(() => window.scrollY);
   await expect(returnToTopButton).not.toBeVisible();
 
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await scrollResultsToBottom();
   await expect(returnToTopButton).toBeInViewport();
   await returnToTopButton.click();
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect.poll(resultScrollOffset).toBe(0);
   await expect(returnToTopButton).not.toBeVisible();
   await expect(resultsTitle).toBeFocused();
 
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await scrollResultsToBottom();
   await page.getByRole('button', { name: 'Change time' }).click();
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  expect(await page.locator('#country-panel').evaluate((panel) => panel.scrollTop)).toBe(0);
   await expect(page.getByRole('spinbutton', { name: 'Seconds' })).toBeVisible();
   expect(consoleErrors).toEqual([]);
 });
 
-test('zooms the map to the countries with slower records', async ({ page }) => {
+test('links dispersed map markers to focused country navigation', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await page.getByLabel('Event').selectOption('1500 metres');
@@ -137,30 +153,108 @@ test('zooms the map to the countries with slower records', async ({ page }) => {
   await page.getByRole('button', { name: 'compare', exact: true }).click();
 
   await expect(page.locator('.map-country-faster')).toHaveCount(4);
-  await expect(page.locator('#world-map')).not.toHaveAttribute('viewBox', '0 0 1000 500');
-  const viewBox = (await page.locator('#world-map').getAttribute('viewBox')) ?? '0 0 1000 500';
-  const width = Number(viewBox.split(' ')[2]);
-  const height = Number(viewBox.split(' ')[3]);
-  expect(width).toBeLessThan(500);
-  expect(width / height).toBeCloseTo(2, 5);
-  expect(
-    await page.locator('#world-map').evaluate((map) => {
-      const [x = 0, y = 0, viewWidth = 0, viewHeight = 0] = (map.getAttribute('viewBox') ?? '')
-        .split(' ')
-        .map(Number);
-      return Array.from(map.querySelectorAll<SVGGraphicsElement>('.map-country-faster')).every(
-        (country) => {
-          const box = country.getBBox();
-          return (
-            box.x >= x &&
-            box.y >= y &&
-            box.x + box.width <= x + viewWidth &&
-            box.y + box.height <= y + viewHeight
-          );
-        },
-      );
-    }),
-  ).toBe(true);
+  await expect(page.locator('#world-map')).toHaveAttribute('viewBox', '0 0 1000 500');
+  await expect(page.locator('.map-result-marker')).toHaveCount(4);
+  if (testInfo.project.name === 'desktop-chrome') {
+    const markerBox = await page.locator('.map-result-marker-badge').first().boundingBox();
+    const panelBox = await page.locator('.country-panel').boundingBox();
+    expect(markerBox?.width).toBeLessThan(40);
+    expect(panelBox?.y).toBeGreaterThanOrEqual(0);
+    expect((panelBox?.y ?? 0) + (panelBox?.height ?? 0)).toBeLessThanOrEqual(
+      page.viewportSize()?.height ?? 0,
+    );
+  }
+  expect(await page.locator('.map-result-marker-label').allTextContents()).toEqual([
+    '1',
+    '2',
+    '3',
+    '4',
+  ]);
+  expect(await page.locator('.country-result-number').allTextContents()).toEqual([
+    '1',
+    '2',
+    '3',
+    '4',
+  ]);
+  await expect(page.locator('#map-overview-status')).toHaveText('4 countries shown');
+
+  await page.getByRole('button', { name: 'Show Laos on map' }).click();
+  await expect(page.locator('#map-focus-status')).toHaveText('1 of 4: Laos');
+  await expect(page.locator('[data-country="Laos"]')).toHaveClass(/map-country-focused/);
+  await expect(page.locator('#world-map')).toHaveClass(/map-view-focused/);
+  const focusedWidth = Number(
+    ((await page.locator('#world-map').getAttribute('viewBox')) ?? '').split(' ')[2],
+  );
+  expect(focusedWidth).toBeLessThan(500);
+
+  if (testInfo.project.name === 'mobile-chrome') {
+    const previousBox = await page.locator('#map-previous').boundingBox();
+    const statusBox = await page.locator('#map-focus-status').boundingBox();
+    expect(previousBox?.width).toBeGreaterThanOrEqual(52);
+    expect(
+      Math.abs(
+        (previousBox?.y ?? 0) +
+          (previousBox?.height ?? 0) / 2 -
+          ((statusBox?.y ?? 0) + (statusBox?.height ?? 0) / 2),
+      ),
+    ).toBeLessThanOrEqual(1);
+  }
+
+  await expect(page.locator('#map-previous')).toHaveAttribute(
+    'aria-label',
+    'Show American Samoa on map',
+  );
+  await page.locator('#map-previous').click();
+  await expect(page.locator('#map-focus-status')).toHaveText('4 of 4: American Samoa');
+  const focusedResult = page.locator('.country-result-focused');
+  await expect(focusedResult).toBeInViewport();
+  const focusedResultBox = await focusedResult.boundingBox();
+  expect(focusedResultBox?.y).toBeGreaterThanOrEqual(0);
+  expect((focusedResultBox?.y ?? 0) + (focusedResultBox?.height ?? 0)).toBeLessThanOrEqual(
+    page.viewportSize()?.height ?? 0,
+  );
+
+  await page.locator('#map-next').click();
+  await expect(page.locator('#map-focus-status')).toHaveText('1 of 4: Laos');
+
+  await expect(page.locator('#map-next')).toHaveAttribute('aria-label', 'Show Bhutan on map');
+  await page.locator('#map-next').click();
+  await expect(page.locator('#map-focus-status')).toHaveText('2 of 4: Bhutan');
+  await expect(page.getByRole('button', { name: 'Show Bhutan on map' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+
+  await page.getByRole('button', { name: 'View all' }).click();
+  await expect(page.locator('#world-map')).toHaveAttribute('viewBox', '0 0 1000 500');
+  await expect(page.locator('#world-map')).not.toHaveClass(/map-view-focused/);
+  await expect(page.locator('#map-overview-status')).toHaveText('4 countries shown');
+});
+
+test('opens a single result in a focused regional map', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.getByLabel('Event').selectOption('1500 metres');
+  await page.getByLabel('Category').selectOption('men');
+
+  const minutes = page.getByRole('spinbutton', { name: 'Minutes' });
+  const seconds = page.getByRole('spinbutton', { name: 'Seconds' });
+  for (let minute = 0; minute < 4; minute += 1) await minutes.press('ArrowDown');
+  for (let second = 0; second < 19; second += 1) await seconds.press('ArrowDown');
+  await page.getByRole('button', { name: 'compare', exact: true }).click();
+
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('faster than 1 country');
+  await expect(page.locator('#map-focus-status')).toHaveText('1 of 1: American Samoa');
+  await expect(page.locator('#map-previous')).toBeDisabled();
+  await expect(page.locator('#map-next')).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Show American Samoa on map' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  const focusedWidth = Number(
+    ((await page.locator('#world-map').getAttribute('viewBox')) ?? '').split(' ')[2],
+  );
+  expect(focusedWidth).toBeLessThan(500);
 });
 
 test('rebuilds the picker when the browser restores native selections', async ({ page }) => {
