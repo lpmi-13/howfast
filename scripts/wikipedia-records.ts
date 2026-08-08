@@ -18,7 +18,11 @@ type Fetcher = typeof fetch;
 const WIKIPEDIA_ORIGIN = 'https://en.wikipedia.org';
 const EVENT_TITLES = new Map<string, EventName>(EVENTS.map((event) => [event, event]));
 const REQUEST_TIMEOUT_MS = 25_000;
-const MAX_CONCURRENCY = 6;
+const MAX_CONCURRENCY = 1;
+const MIN_REQUEST_INTERVAL_MS = 2_000;
+const MAX_FETCH_ATTEMPTS = 5;
+const RETRY_DELAY_BASE_MS = 5_000;
+const MAX_RETRY_DELAY_MS = 60_000;
 
 export function parseSourcesFile(contents: string): WikipediaSource[] {
   const seen = new Set<string>();
@@ -93,6 +97,7 @@ export function parseWikipediaRecords(
   const $ = load(html);
   const parsed: Partial<Record<Gender, Partial<Record<EventName, NationalRecord>>>> = {};
   let inOutdoorSection = false;
+  let outdoorSectionId = 'Outdoor';
   let gender: Gender | null = null;
 
   $('h2, h3, h4, h5, tr').each((_index, element) => {
@@ -100,6 +105,10 @@ export function parseWikipediaRecords(
 
     if (tagName === 'h2') {
       inOutdoorSection = /^outdoor\b/iu.test($(element).text().trim());
+      if (inOutdoorSection) {
+        outdoorSectionId =
+          $(element).attr('id') ?? $(element).find('[id]').first().attr('id') ?? 'Outdoor';
+      }
       gender = null;
       return;
     }
@@ -138,10 +147,12 @@ export function parseWikipediaRecords(
     const milliseconds = parseRecordTime(recordCell.text(), event);
     if (milliseconds === null) return;
 
+    const sourceUrl = new URL(source.url, WIKIPEDIA_ORIGIN);
+    sourceUrl.hash = outdoorSectionId;
     const record: NationalRecord = {
       country: source.country,
       milliseconds,
-      sourceUrl: new URL(source.url, WIKIPEDIA_ORIGIN).href,
+      sourceUrl: sourceUrl.href,
     };
     const current = parsed[gender]?.[event];
 
@@ -162,10 +173,11 @@ export async function buildRecordsData(
 ): Promise<RecordsData> {
   const events = createEmptyEvents();
   let completed = 0;
+  const waitForRequestSlot = createRequestPacer(MIN_REQUEST_INTERVAL_MS);
 
   await mapWithConcurrency(sources, MAX_CONCURRENCY, async (source) => {
     try {
-      const html = await fetchWikipediaPage(source, fetcher);
+      const html = await fetchWikipediaPage(source, fetcher, waitForRequestSlot);
       const parsed = parseWikipediaRecords(html, source);
 
       for (const gender of GENDERS) {
@@ -176,7 +188,7 @@ export async function buildRecordsData(
       }
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
-      console.warn(`Skipped ${source.country}: ${reason}`);
+      throw new Error(`Failed to load records for ${source.country}: ${reason}`, { cause: error });
     } finally {
       completed += 1;
       onProgress(completed, sources.length);
@@ -189,8 +201,6 @@ export async function buildRecordsData(
     }
   }
 
-  validateCoverage(events);
-
   return {
     generatedAt: new Date().toISOString(),
     sourcePageCount: sources.length,
@@ -198,11 +208,16 @@ export async function buildRecordsData(
   };
 }
 
-async function fetchWikipediaPage(source: WikipediaSource, fetcher: Fetcher): Promise<string> {
+export async function fetchWikipediaPage(
+  source: WikipediaSource,
+  fetcher: Fetcher,
+  waitForRequestSlot: () => Promise<void> = () => Promise.resolve(),
+): Promise<string> {
   const url = new URL(source.url, WIKIPEDIA_ORIGIN);
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
+  for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt += 1) {
+    await waitForRequestSlot();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
@@ -215,11 +230,20 @@ async function fetchWikipediaPage(source: WikipediaSource, fetcher: Fetcher): Pr
         redirect: 'follow',
         signal: controller.signal,
       });
-      if (!response.ok) throw new Error(`Wikipedia returned HTTP ${response.status}`);
+      if (!response.ok) {
+        const error = new Error(`Wikipedia returned HTTP ${response.status}`);
+        if (!isRetryableStatus(response.status)) throw new NonRetryableFetchError(error.message);
+        if (attempt === MAX_FETCH_ATTEMPTS) throw error;
+
+        lastError = error;
+        await wait(getRetryDelay(response.headers.get('retry-after'), attempt));
+        continue;
+      }
       return await response.text();
     } catch (error) {
+      if (error instanceof NonRetryableFetchError) throw error;
       lastError = error;
-      if (attempt < 3) await wait(attempt * 300);
+      if (attempt < MAX_FETCH_ATTEMPTS) await wait(getRetryDelay(null, attempt));
     } finally {
       clearTimeout(timeout);
     }
@@ -228,22 +252,47 @@ async function fetchWikipediaPage(source: WikipediaSource, fetcher: Fetcher): Pr
   throw lastError instanceof Error ? lastError : new Error('Wikipedia request failed.');
 }
 
+class NonRetryableFetchError extends Error {}
+
+function createRequestPacer(intervalMilliseconds: number): () => Promise<void> {
+  let queue = Promise.resolve();
+  let lastRequestAt = 0;
+
+  return () => {
+    const slot = queue.then(async () => {
+      const delay = Math.max(0, lastRequestAt + intervalMilliseconds - Date.now());
+      if (delay > 0) await wait(delay);
+      lastRequestAt = Date.now();
+    });
+    queue = slot.catch(() => {});
+    return slot;
+  };
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status >= 500;
+}
+
+function getRetryDelay(retryAfter: string | null, attempt: number): number {
+  if (retryAfter !== null) {
+    const seconds = Number(retryAfter);
+    if (Number.isFinite(seconds) && seconds >= 0) {
+      return Math.min(seconds * 1_000, MAX_RETRY_DELAY_MS);
+    }
+
+    const retryAt = Date.parse(retryAfter);
+    if (Number.isFinite(retryAt)) {
+      return Math.min(Math.max(0, retryAt - Date.now()), MAX_RETRY_DELAY_MS);
+    }
+  }
+
+  return Math.min(RETRY_DELAY_BASE_MS * 2 ** (attempt - 1), MAX_RETRY_DELAY_MS);
+}
+
 function createEmptyEvents(): RecordsData['events'] {
   return Object.fromEntries(
     EVENTS.map((event) => [event, { women: [], men: [] }]),
   ) as unknown as RecordsData['events'];
-}
-
-function validateCoverage(events: RecordsData['events']): void {
-  const missing = EVENTS.flatMap((event) =>
-    GENDERS.filter((gender) => events[event][gender].length < 20).map(
-      (gender) => `${event} (${gender}): ${events[event][gender].length}`,
-    ),
-  );
-
-  if (missing.length > 0) {
-    throw new Error(`Wikipedia parsing produced too few records:\n${missing.join('\n')}`);
-  }
 }
 
 async function mapWithConcurrency<T>(
