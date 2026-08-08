@@ -14,6 +14,9 @@
   --cream: #fffaf0;
   --coral: #f16b4e;
   --mint: #9dd8c5;
+  --map-land: #303238;
+  --map-highlight: #2aa6a5;
+  --map-border: #755054;
   --line: rgba(21, 34, 56, 0.18);
 }
 
@@ -538,7 +541,7 @@ p {
   width: 100%;
   overflow-x: auto;
   background: var(--landing);
-  scrollbar-color: teal transparent;
+  scrollbar-color: var(--map-highlight) transparent;
 }
 
 #world-map {
@@ -550,8 +553,8 @@ p {
 }
 
 .map-country {
-  fill: teal;
-  stroke: white;
+  fill: var(--map-land);
+  stroke: var(--map-border);
   stroke-width: 0.5;
   transition:
     fill 320ms ease,
@@ -559,8 +562,8 @@ p {
 }
 
 .map-country-faster {
-  fill: #050505;
-  stroke: #ef4444;
+  fill: var(--map-highlight);
+  stroke: var(--map-border);
 }
 
 .country-panel {
