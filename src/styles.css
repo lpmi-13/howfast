@@ -16,7 +16,7 @@
   --mint: #9dd8c5;
   --map-land: #303238;
   --map-highlight: #2aa6a5;
-  --map-border: #755054;
+  --map-border: #ffe66d;
   --line: rgba(21, 34, 56, 0.18);
 }
 
@@ -555,7 +555,8 @@ p {
 .map-country {
   fill: var(--map-land);
   stroke: var(--map-border);
-  stroke-width: 0.5;
+  stroke-width: 0.75;
+  vector-effect: non-scaling-stroke;
   transition:
     fill 320ms ease,
     stroke 320ms ease;
@@ -564,6 +565,7 @@ p {
 .map-country-faster {
   fill: var(--map-highlight);
   stroke: var(--map-border);
+  stroke-width: 1.25;
 }
 
 .country-panel {

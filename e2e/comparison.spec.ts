@@ -74,7 +74,8 @@ test('compares a sprint time using only bundled data', async ({ page }, testInfo
     'rgb(48, 50, 56)',
   );
   await expect(page.locator('.map-country-faster').first()).toHaveCSS('fill', 'rgb(42, 166, 165)');
-  await expect(page.locator('.map-country-faster').first()).toHaveCSS('stroke', 'rgb(117, 80, 84)');
+  await expect(page.locator('.map-country').first()).toHaveCSS('stroke', 'rgb(255, 230, 109)');
+  await expect(page.locator('.map-country-faster').first()).toHaveCSS('stroke-width', '1.25px');
   const resultsTitle = page.getByRole('heading', { level: 1 });
   await expect(resultsTitle).toContainText(/faster than|does not beat/);
   await expect(resultsTitle).toBeFocused();
@@ -121,6 +122,27 @@ test('compares a sprint time using only bundled data', async ({ page }, testInfo
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
   await expect(page.getByRole('spinbutton', { name: 'Seconds' })).toBeVisible();
   expect(consoleErrors).toEqual([]);
+});
+
+test('zooms the map to the countries with slower records', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.getByLabel('Event').selectOption('1500 metres');
+  await page.getByLabel('Category').selectOption('men');
+
+  const minutes = page.getByRole('spinbutton', { name: 'Minutes' });
+  const seconds = page.getByRole('spinbutton', { name: 'Seconds' });
+  for (let minute = 0; minute < 4; minute += 1) await minutes.press('ArrowDown');
+  for (let second = 0; second < 4; second += 1) await seconds.press('ArrowDown');
+  await page.getByRole('button', { name: 'compare', exact: true }).click();
+
+  await expect(page.locator('.map-country-faster')).toHaveCount(4);
+  await expect(page.locator('#world-map')).not.toHaveAttribute('viewBox', '0 0 1000 500');
+  const viewBox = (await page.locator('#world-map').getAttribute('viewBox')) ?? '0 0 1000 500';
+  const width = Number(viewBox.split(' ')[2]);
+  const height = Number(viewBox.split(' ')[3]);
+  expect(width).toBeLessThan(500);
+  expect(width / height).toBeCloseTo(2, 5);
 });
 
 test('rebuilds the picker when the browser restores native selections', async ({ page }) => {
