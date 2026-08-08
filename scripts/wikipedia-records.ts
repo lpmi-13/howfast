@@ -15,6 +15,31 @@ export interface WikipediaSource {
 
 type Fetcher = typeof fetch;
 
+export type BuildProgress =
+  | {
+      stage: 'fetching';
+      source: WikipediaSource;
+      pageNumber: number;
+      totalPages: number;
+    }
+  | {
+      stage: 'retrying';
+      source: WikipediaSource;
+      attempt: number;
+      maxAttempts: number;
+      delayMilliseconds: number;
+      reason: string;
+    }
+  | {
+      stage: 'processed';
+      source: WikipediaSource;
+      pageNumber: number;
+      totalPages: number;
+      recordCount: number;
+    };
+
+type ProgressReporter = (progress: BuildProgress) => void;
+
 const WIKIPEDIA_ORIGIN = 'https://en.wikipedia.org';
 const EVENT_TITLES = new Map<string, EventName>(EVENTS.map((event) => [event, event]));
 const REQUEST_TIMEOUT_MS = 25_000;
@@ -169,29 +194,43 @@ export function parseWikipediaRecords(
 export async function buildRecordsData(
   sources: WikipediaSource[],
   fetcher: Fetcher = fetch,
-  onProgress: (completed: number, total: number) => void = () => {},
+  onProgress: ProgressReporter = () => {},
 ): Promise<RecordsData> {
   const events = createEmptyEvents();
   let completed = 0;
   const waitForRequestSlot = createRequestPacer(MIN_REQUEST_INTERVAL_MS);
 
   await mapWithConcurrency(sources, MAX_CONCURRENCY, async (source) => {
+    const pageNumber = completed + 1;
+    onProgress({ stage: 'fetching', source, pageNumber, totalPages: sources.length });
+
     try {
-      const html = await fetchWikipediaPage(source, fetcher, waitForRequestSlot);
+      const html = await fetchWikipediaPage(source, fetcher, waitForRequestSlot, onProgress);
       const parsed = parseWikipediaRecords(html, source);
+      let recordCount = 0;
 
       for (const gender of GENDERS) {
         for (const event of EVENTS) {
           const record = parsed[gender]?.[event];
-          if (record) events[event][gender].push(record);
+          if (record) {
+            events[event][gender].push(record);
+            recordCount += 1;
+          }
         }
       }
+
+      onProgress({
+        stage: 'processed',
+        source,
+        pageNumber,
+        totalPages: sources.length,
+        recordCount,
+      });
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to load records for ${source.country}: ${reason}`, { cause: error });
     } finally {
       completed += 1;
-      onProgress(completed, sources.length);
     }
   });
 
@@ -212,6 +251,7 @@ export async function fetchWikipediaPage(
   source: WikipediaSource,
   fetcher: Fetcher,
   waitForRequestSlot: () => Promise<void> = () => Promise.resolve(),
+  onProgress: ProgressReporter = () => {},
 ): Promise<string> {
   const url = new URL(source.url, WIKIPEDIA_ORIGIN);
   let lastError: unknown;
@@ -236,14 +276,20 @@ export async function fetchWikipediaPage(
         if (attempt === MAX_FETCH_ATTEMPTS) throw error;
 
         lastError = error;
-        await wait(getRetryDelay(response.headers.get('retry-after'), attempt));
+        const delayMilliseconds = getRetryDelay(response.headers.get('retry-after'), attempt);
+        reportRetry(onProgress, source, attempt, delayMilliseconds, error);
+        await wait(delayMilliseconds);
         continue;
       }
       return await response.text();
     } catch (error) {
       if (error instanceof NonRetryableFetchError) throw error;
       lastError = error;
-      if (attempt < MAX_FETCH_ATTEMPTS) await wait(getRetryDelay(null, attempt));
+      if (attempt < MAX_FETCH_ATTEMPTS) {
+        const delayMilliseconds = getRetryDelay(null, attempt);
+        reportRetry(onProgress, source, attempt, delayMilliseconds, error);
+        await wait(delayMilliseconds);
+      }
     } finally {
       clearTimeout(timeout);
     }
@@ -253,6 +299,23 @@ export async function fetchWikipediaPage(
 }
 
 class NonRetryableFetchError extends Error {}
+
+function reportRetry(
+  onProgress: ProgressReporter,
+  source: WikipediaSource,
+  attempt: number,
+  delayMilliseconds: number,
+  error: unknown,
+): void {
+  onProgress({
+    stage: 'retrying',
+    source,
+    attempt: attempt + 1,
+    maxAttempts: MAX_FETCH_ATTEMPTS,
+    delayMilliseconds,
+    reason: error instanceof Error ? error.message : String(error),
+  });
+}
 
 function createRequestPacer(intervalMilliseconds: number): () => Promise<void> {
   let queue = Promise.resolve();
