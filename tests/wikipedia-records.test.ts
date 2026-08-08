@@ -101,6 +101,29 @@ describe('Wikipedia fetching', () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 
+  it('reports page and retry progress during a data build', async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('', { status: 429, headers: { 'Retry-After': '0' } }))
+      .mockResolvedValueOnce(new Response(fixture));
+    const progress = vi.fn();
+
+    await buildRecordsData([source], fetcher, progress);
+
+    expect(progress.mock.calls.map(([event]) => event)).toEqual([
+      { stage: 'fetching', source, pageNumber: 1, totalPages: 1 },
+      {
+        stage: 'retrying',
+        source,
+        attempt: 2,
+        maxAttempts: 5,
+        delayMilliseconds: 0,
+        reason: 'Wikipedia returned HTTP 429',
+      },
+      { stage: 'processed', source, pageNumber: 1, totalPages: 1, recordCount: 4 },
+    ]);
+  });
+
   it('fails the data build when a source page cannot be loaded', async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response('', { status: 404 }));
 
