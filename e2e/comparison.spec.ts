@@ -143,6 +143,24 @@ test('zooms the map to the countries with slower records', async ({ page }) => {
   const height = Number(viewBox.split(' ')[3]);
   expect(width).toBeLessThan(500);
   expect(width / height).toBeCloseTo(2, 5);
+  expect(
+    await page.locator('#world-map').evaluate((map) => {
+      const [x = 0, y = 0, viewWidth = 0, viewHeight = 0] = (map.getAttribute('viewBox') ?? '')
+        .split(' ')
+        .map(Number);
+      return Array.from(map.querySelectorAll<SVGGraphicsElement>('.map-country-faster')).every(
+        (country) => {
+          const box = country.getBBox();
+          return (
+            box.x >= x &&
+            box.y >= y &&
+            box.x + box.width <= x + viewWidth &&
+            box.y + box.height <= y + viewHeight
+          );
+        },
+      );
+    }),
+  ).toBe(true);
 });
 
 test('rebuilds the picker when the browser restores native selections', async ({ page }) => {

@@ -1,4 +1,4 @@
-import { geoMercator, geoPath, type GeoPermissibleObjects } from 'd3-geo';
+import { geoMercator, geoPath, type GeoPermissibleObjects, type GeoProjection } from 'd3-geo';
 import recordsJson from '../data/results.json';
 import worldData from '../data/world';
 import {
@@ -51,11 +51,24 @@ const MAP_NAME_ALIASES: Record<string, string> = {
   'Republic of the Congo': 'Congo',
   'South Sudan': 'S. Sudan',
   'The Bahamas': 'Bahamas',
+  Tanzania: 'United Republic of Tanzania',
+};
+const MAP_MARKER_COORDINATES: Record<string, [number, number]> = {
+  'American Samoa': [-170.7, -14.3],
+  Andorra: [1.6, 42.5],
+  Anguilla: [-63.1, 18.2],
+  'Antigua and Barbuda': [-61.8, 17.1],
+  Aruba: [-70.0, 12.5],
+  Bahrain: [50.6, 26.1],
+  Barbados: [-59.5, 13.2],
+  Bermuda: [-64.8, 32.3],
+  Singapore: [103.8, 1.4],
+  Tonga: [-175.2, -21.2],
 };
 
 export class HowFastApp {
   private readonly elements: AppElements;
-  private readonly mapPaths = new Map<string, SVGPathElement>();
+  private readonly mapPaths = new Map<string, SVGGraphicsElement>();
   private mapAnimationFrame = 0;
 
   constructor(private readonly document: Document = globalThis.document) {
@@ -408,14 +421,46 @@ export class HowFastApp {
       this.elements.worldMap.append(path);
       this.mapPaths.set(countryName, path);
     }
+
+    for (const [countryName, coordinates] of Object.entries(MAP_MARKER_COORDINATES)) {
+      if (this.mapPaths.has(countryName)) continue;
+      this.renderMapMarker(countryName, coordinates, projection);
+    }
+  }
+
+  private renderMapMarker(
+    countryName: string,
+    coordinates: [number, number],
+    projection: GeoProjection,
+  ): void {
+    const position = projection(coordinates);
+    if (!position) return;
+
+    const marker = this.document.createElementNS(SVG_NAMESPACE, 'circle');
+    const title = this.document.createElementNS(SVG_NAMESPACE, 'title');
+    marker.setAttribute('cx', position[0].toString());
+    marker.setAttribute('cy', position[1].toString());
+    marker.setAttribute('r', '3');
+    marker.setAttribute('class', 'map-country map-country-marker');
+    marker.dataset.country = countryName;
+    title.textContent = countryName;
+    marker.append(title);
+    this.elements.worldMap.append(marker);
+    this.mapPaths.set(countryName, marker);
+  }
+
+  private getMapCountry(country: string): SVGGraphicsElement | undefined {
+    return (
+      this.mapPaths.get(country) ??
+      (MAP_NAME_ALIASES[country] ? this.mapPaths.get(MAP_NAME_ALIASES[country]) : undefined)
+    );
   }
 
   private highlightCountries(slowerRecords: NationalRecord[]): void {
     for (const path of this.mapPaths.values()) path.classList.remove('map-country-faster');
 
     for (const record of slowerRecords) {
-      const mapName = MAP_NAME_ALIASES[record.country] ?? record.country;
-      this.mapPaths.get(mapName)?.classList.add('map-country-faster');
+      this.getMapCountry(record.country)?.classList.add('map-country-faster');
     }
   }
 
@@ -424,9 +469,8 @@ export class HowFastApp {
     this.elements.worldMap.setAttribute('viewBox', this.formatViewBox(WORLD_MAP_VIEW_BOX));
 
     const highlightedPaths = slowerRecords
-      .map((record) => MAP_NAME_ALIASES[record.country] ?? record.country)
-      .map((country) => this.mapPaths.get(country))
-      .filter((path): path is SVGPathElement => path !== undefined);
+      .map((record) => this.getMapCountry(record.country))
+      .filter((path): path is SVGGraphicsElement => path !== undefined);
     if (highlightedPaths.length === 0) return;
 
     const boxes = highlightedPaths.map((path) => path.getBBox());
