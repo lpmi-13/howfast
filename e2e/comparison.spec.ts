@@ -180,12 +180,22 @@ test('links dispersed map markers to focused country navigation', async ({ page 
 
   await page.getByRole('button', { name: 'Show Laos on map' }).click();
   await expect(page.locator('#map-focus-status')).toHaveText('1 of 4: Laos');
+  await expect(page.locator('#results')).toHaveClass(/exploring-countries/);
+  await expect(page.locator('.results-header')).toBeHidden();
   await expect(page.locator('[data-country="Laos"]')).toHaveClass(/map-country-focused/);
   await expect(page.locator('#world-map')).toHaveClass(/map-view-focused/);
   const focusedWidth = Number(
     ((await page.locator('#world-map').getAttribute('viewBox')) ?? '').split(' ')[2],
   );
   expect(focusedWidth).toBeLessThan(500);
+
+  const mapPositionBeforeListScroll = await page.locator('#map-panel').boundingBox();
+  await page
+    .locator('#country-panel')
+    .evaluate((panel) => panel.scrollTo({ top: panel.scrollHeight, behavior: 'instant' }));
+  const mapPositionAfterListScroll = await page.locator('#map-panel').boundingBox();
+  expect(mapPositionAfterListScroll?.y).toBe(mapPositionBeforeListScroll?.y);
+  await expect(page.locator('#map-next')).toBeInViewport();
 
   if (testInfo.project.name === 'mobile-chrome') {
     const previousBox = await page.locator('#map-previous').boundingBox();

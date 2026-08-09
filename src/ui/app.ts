@@ -407,6 +407,7 @@ export class HowFastApp {
     this.elements.countryPanel.scrollTop = 0;
     this.elements.results.hidden = false;
     this.document.body.classList.add('showing-results');
+    this.elements.results.classList.remove('exploring-countries');
     this.renderCountryList(slowerRecords);
     this.highlightCountries(slowerRecords);
     this.configureResultMap(slowerRecords);
@@ -705,6 +706,7 @@ export class HowFastApp {
     if (!record || !path || !this.mappableResultIndices.includes(resultIndex)) return;
 
     this.focusedResultIndex = resultIndex;
+    this.elements.results.classList.add('exploring-countries');
     this.elements.worldMap.classList.add('map-view-focused');
     this.elements.mapOverviewNavigation.hidden = true;
     this.elements.mapFocusNavigation.hidden = false;
@@ -738,10 +740,7 @@ export class HowFastApp {
 
     if (scrollToMap) {
       this.elements.mapFocusStatus.focus({ preventScroll: true });
-      this.elements.mapPanel.scrollIntoView({
-        behavior: this.getScrollBehavior('smooth'),
-        block: 'start',
-      });
+      this.scrollResultIntoView(resultIndex);
     }
   }
 
