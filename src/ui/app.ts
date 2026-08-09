@@ -871,23 +871,28 @@ export class HowFastApp {
 
   private editTime(): void {
     const view = this.document.defaultView;
-    const documentElement = this.document.documentElement;
-    const previousScrollBehavior = documentElement.style.scrollBehavior;
 
     this.elements.results.hidden = true;
     this.elements.countryPanel.scrollTop = 0;
     this.restoreSelectionState();
     this.document.body.classList.remove('showing-results');
 
-    documentElement.style.scrollBehavior = 'auto';
-    this.document.body.getBoundingClientRect();
-    documentElement.scrollTop = 0;
-    this.document.body.scrollTop = 0;
-    view?.scrollTo(0, 0);
-    documentElement.style.scrollBehavior = previousScrollBehavior;
+    this.scrollLandingToTop();
+    view?.requestAnimationFrame(() => this.scrollLandingToTop());
 
     this.updateReturnTopButton();
     this.elements.eventSelect.focus({ preventScroll: true });
+  }
+
+  private scrollLandingToTop(): void {
+    const documentElement = this.document.documentElement;
+    const previousScrollBehavior = documentElement.style.scrollBehavior;
+
+    documentElement.style.scrollBehavior = 'auto';
+    documentElement.scrollTop = 0;
+    this.document.body.scrollTop = 0;
+    this.document.defaultView?.scrollTo(0, 0);
+    documentElement.style.scrollBehavior = previousScrollBehavior;
   }
 
   private returnToTop(): void {

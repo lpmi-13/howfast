@@ -134,7 +134,13 @@ test('compares a sprint time using only bundled data', async ({ page }, testInfo
 
   await scrollResultsToBottom();
   await page.getByRole('button', { name: 'Change time' }).click();
-  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   expect(await page.locator('#country-panel').evaluate((panel) => panel.scrollTop)).toBe(0);
   await expect(page.getByRole('spinbutton', { name: 'Seconds' })).toBeVisible();
   expect(consoleErrors).toEqual([]);
