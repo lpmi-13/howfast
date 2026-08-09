@@ -17,8 +17,8 @@ national record is slower. Record entries link back to their English Wikipedia s
 - A TypeScript Wikipedia ingestion script using Cheerio
 
 The deployed app is entirely static. It has no Python dependencies, server process, database,
-runtime API requests, credentials, or Netlify Functions. Every production build fetches a fresh
-record snapshot and bundles it with the site, so entered times never leave the browser.
+runtime API requests, credentials, or Netlify Functions. Production builds reuse Wikipedia data
+for up to one week and bundle the snapshot with the site, so entered times never leave the browser.
 
 ## Development
 
@@ -45,8 +45,12 @@ npm run check      # lint, unit tests, build, and formatting
 run. Use `npm run data` whenever you want to refresh it during development. The generated
 `src/data/results.json` file is ignored by Git, so it is never something you need to commit.
 
-`npm run build` always refreshes the snapshot before building. `npm run build:app` is available when
-you deliberately want an offline build using the existing local snapshot.
+`npm run build` checks the public `/last-accessed` UTC timestamp and reuses the deployed snapshot
+when it is less than one week old. A missing marker (including the first build after this feature
+was added), an invalid marker, or a marker at least one week old triggers a Wikipedia refresh.
+The marker is written only after every page has been fetched and the snapshot has been written;
+Netlify's atomic deploy means it is not published if a later build step fails. `npm run build:app`
+is available when you deliberately want an offline build using the existing local snapshot.
 
 ## Record ingestion
 
@@ -71,7 +75,7 @@ Wikipedia content is available under CC BY-SA; the UI retains source-page links 
 
 `netlify.toml` configures:
 
-- build command: `npm run build`, which fetches the latest Wikipedia data before compiling
+- build command: `npm run build`, which refreshes Wikipedia data when it is at least one week old
 - publish directory: `dist`
 - exact Node and npm versions
 - an SPA fallback to `index.html`

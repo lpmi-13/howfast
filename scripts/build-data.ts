@@ -4,6 +4,8 @@ import { type BuildProgress, buildRecordsData, parseSourcesFile } from './wikipe
 
 const sourcePath = resolve('urls.txt');
 const outputPath = resolve('src/data/results.json');
+const publicDataPath = resolve('static/records-data.json');
+const lastAccessedPath = resolve('static/last-accessed');
 
 async function main(): Promise<void> {
   console.log(`Reading Wikipedia page list from ${sourcePath}`);
@@ -14,8 +16,13 @@ async function main(): Promise<void> {
 
   console.log(`Finished processing ${data.sourcePageCount} Wikipedia pages.`);
   console.log(`Writing generated records to ${outputPath}`);
-  await writeFile(outputPath, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
+  const serializedData = `${JSON.stringify(data, null, 2)}\n`;
+  await writeFile(outputPath, serializedData, 'utf8');
+  await writeFile(publicDataPath, serializedData, 'utf8');
+  // Write this marker last: it must only advance after every Wikipedia page and output succeeded.
+  await writeFile(lastAccessedPath, `${data.generatedAt}\n`, 'utf8');
   console.log(`Wrote ${outputPath}`);
+  console.log(`Wrote public refresh marker to ${lastAccessedPath}`);
 }
 
 function logProgress(progress: BuildProgress): void {
