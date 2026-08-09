@@ -480,6 +480,11 @@ p {
   background: var(--landing);
 }
 
+.showing-results main {
+  min-height: 100dvh;
+  background: var(--landing);
+}
+
 .showing-results .hero,
 .showing-results .about,
 .showing-results .site-footer {
@@ -1071,7 +1076,7 @@ circle.map-country-focused {
 
   /* Once map exploration begins, the map and list become two independent panes. */
   .results.exploring-countries {
-    height: 100svh;
+    height: 100dvh;
     min-height: 0;
     padding-bottom: 0;
     overflow: hidden;

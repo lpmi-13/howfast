@@ -3,3 +3,5 @@ dist
 playwright-report
 test-results
 /src/data/results.json
+/static/last-accessed
+/static/records-data.json

@@ -198,8 +198,12 @@ test('links dispersed map markers to focused country navigation', async ({ page 
   await expect(page.locator('#map-next')).toBeInViewport();
 
   if (testInfo.project.name === 'mobile-chrome') {
+    const viewportHeight = await page.evaluate(() => window.innerHeight);
+    const resultsBox = await page.locator('#results').boundingBox();
     const previousBox = await page.locator('#map-previous').boundingBox();
     const statusBox = await page.locator('#map-focus-status').boundingBox();
+    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(40, 44, 52)');
+    expect(resultsBox?.height).toBe(viewportHeight);
     expect(previousBox?.width).toBeGreaterThanOrEqual(52);
     expect(
       Math.abs(

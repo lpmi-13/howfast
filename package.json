@@ -10,7 +10,7 @@
     "dev": "vite",
     "data": "node scripts/build-data.ts",
     "data:ensure": "node scripts/ensure-data.ts",
-    "build": "npm run data && npm run build:app",
+    "build": "node scripts/prepare-data.ts && npm run build:app",
     "build:app": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "biome lint .",
