@@ -674,11 +674,10 @@ circle.map-country-focused {
   min-height: 3.25rem;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   color: white;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
   text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .map-focus-row p:focus-visible {
@@ -818,10 +817,12 @@ circle.map-country-focused {
 }
 
 .country-list a {
+  max-width: 100%;
   color: white;
   font-size: clamp(1.55rem, 5vw, 2.5rem);
   font-weight: 680;
   letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
   text-underline-offset: 0.2rem;
 }
 

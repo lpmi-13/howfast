@@ -1,6 +1,5 @@
 import { geoMercator, geoPath, type GeoPermissibleObjects, type GeoProjection } from 'd3-geo';
 import recordsJson from '../data/results.json';
-import worldData from '../data/world';
 import {
   EVENTS,
   findSlowerRecords,
@@ -104,7 +103,7 @@ export class HowFastApp {
 
   mount(): void {
     this.populateEvents();
-    this.renderMap();
+    void this.renderMap();
     this.renderDataStamp();
 
     this.elements.eventSelect.addEventListener('change', () => this.handleEventChange());
@@ -466,7 +465,8 @@ export class HowFastApp {
     });
   }
 
-  private renderMap(): void {
+  private async renderMap(): Promise<void> {
+    const { default: worldData } = await import('../data/world');
     const projection = geoMercator().scale(145).translate([500, 310]);
     const pathGenerator = geoPath(projection);
 

@@ -218,6 +218,17 @@ test('links dispersed map markers to focused country navigation', async ({ page 
           ((statusBox?.y ?? 0) + (statusBox?.height ?? 0) / 2),
       ),
     ).toBeLessThanOrEqual(1);
+
+    const focusStatus = page.locator('#map-focus-status');
+    await focusStatus.evaluate((status) => {
+      status.textContent = '120: Democratic Republic of the Congo';
+    });
+    expect(await focusStatus.evaluate((status) => status.scrollWidth <= status.clientWidth)).toBe(
+      true,
+    );
+    expect(await focusStatus.evaluate((status) => status.scrollHeight <= status.clientHeight)).toBe(
+      true,
+    );
   }
 
   await expect(page.locator('#map-previous')).toHaveAttribute(
